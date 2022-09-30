@@ -10,7 +10,7 @@
 
 html, body {
   width: 100%;
-  height: 100%;
+  height: 200%;
   background-color: black;
 }
 
@@ -25,7 +25,7 @@ canvas {
   position: absolute;
   display: flex;
   width: 100%;
-  height: 100%;
+  height: auto;
   top: 100%;
   background-color: black;
 }
@@ -79,7 +79,7 @@ a {
   
   .info-container-child {
     width: 30%;
-    height: 77%;
+    height: auto;
     padding: 2%;
     padding-top: 0;
     padding-bottom: 0;
@@ -99,7 +99,7 @@ a {
   
   .media-link {
     width: 20%;
-    align-self: flex-end;
+    align-self: center;
   }
 
   .media-link a img {
@@ -111,7 +111,7 @@ a {
     left: 50%;
     top: 200%;
     transform: translate(-50%, -200%);
-    height: 2vw
+    height: 2vw;
   }
 }
 
@@ -127,7 +127,7 @@ a {
   #info-container {
     justify-content: space-between;
     width: 100%;
-    height: 100%;
+    height: auto;
     font-size: 3.3vw;
   }
 
