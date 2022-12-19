@@ -48,9 +48,9 @@ function draw(){
   // }
   
   if(frameCount % 60 == 0 && !mouseIsPressed && window.innerWidth >= 1024){
-    randomiseVals(0.12, 0.12)
+    randomiseVals(0.15, 0.15)
   } else if (frameCount % 60 == 0 && !mouseIsPressed && window.innerWidth < 1024) {
-    randomiseVals(0.09, 0.12)
+    randomiseVals(0.12, 0.15)
   }
 
   // Responsive web
