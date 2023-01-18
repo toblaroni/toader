@@ -1,7 +1,6 @@
 
 ********************************* PERSONAL WEBSITE ***********************************                   
 
-                                   CODED BY ME
                                    USING P5.JS
                                   WWW.TOADER.XYZ
 
