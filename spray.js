@@ -1,8 +1,9 @@
 const canvas = document.getElementById("canvas");
+const saveBtn = document.getElementById("save-canvas");
+
 const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = true;
 
-ctx.strokeStyle = "white";
 let drawing = false;
 
 function getMouseCoords(element, event) {
@@ -12,6 +13,12 @@ function getMouseCoords(element, event) {
     }
 }
 
+function beginDraw(e) {
+    drawing = true;
+    ctx.beginPath();
+    draw(e);
+}
+
 function draw(e) {
     if (drawing == false) return;
     
@@ -19,16 +26,29 @@ function draw(e) {
 
     ctx.lineTo(mouseX, mouseY);
     ctx.stroke();
-
+   
     ctx.beginPath();
     ctx.moveTo(mouseX, mouseY);
 }
 
+async function saveCanvas(e) {
+    e.preventDefault();
 
-canvas.addEventListener("mousedown", (e) => {
-    drawing = true;
-    ctx.beginPath();
-    draw(e);
-});
+    // Stringify the canvas  
+    const canvasStr = canvas.toDataURL();
+
+    // Send request to server
+    const response = await fetch('http://127.0.0.1:8080/api/saveCanvas', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({canvasStr})
+    });
+    // console.log(response.json());
+}
+
+saveBtn.addEventListener("submit", saveCanvas);
+canvas.addEventListener("mousedown", beginDraw);
 canvas.addEventListener("mouseup", () => drawing = false);
 canvas.addEventListener("mousemove", draw);
