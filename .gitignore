@@ -1,0 +1,24 @@
+# Logs
+logs
+*.log
+
+# Build files
+dist
+build
+out
+
+# Dependency directories
+node_modules
+package-lock.json
+
+# Optional npm cache directory
+.npm
+
+# Environment variables
+.env
+
+# IDE and editor files
+.vscode
+
+# Operating system files
+.DS_Store
