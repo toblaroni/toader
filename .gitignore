@@ -22,3 +22,10 @@ package-lock.json
 
 # Operating system files
 .DS_Store
+
+# Database
+db/
+*.db
+
+# Libraries
+lib

@@ -1,12 +1,14 @@
 const http = require("http");
-const fs = require("fs");
 const port = 8080;
+
 
 function saveCanvas(body) {
     if (body === '') return;
     try {
-        console.log(JSON.parse(body));
-        // Save to the csv file
+        const bodyData = JSON.parse(body);
+        // Save the canvas
+        console.log(bodyData)
+
     } catch (error) {
         console.log(error)
     }
