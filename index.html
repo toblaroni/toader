@@ -5,68 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <script src="spray.js" defer></script>
   <title>☺☺☺☺☺☺☺☺☺☺☺☺☺</title>
 </head>
-<body id="body">
-
-  <a href="#info-container" class="down-arrow"><img src="assets/down-arrow.svg" alt="down arrow" class="down-arrow" id="down-arrow-svg"></a>
-  <section #info>
-    <div id="info-container">
-      <div class="info-container-child" id="about">
-        <h2>TOBY HUTCHINSON</h2>
-        <p>I am a second year computer science student studying at The University of Leeds. <br><br>
-        Outside of my course I enjoy making fun websites, creative coding, drawing, reading books and listening to music. 
-        <br> <br>
-
-        <a href="assets/CV.pdf" target="_blank">Check out my CV.</a>
-        <br><br>
-
-        Have a look at my graphic design, photography and coded animations on my Instagram.
-        Or take a look at my code on my Github or reach out on LinkedIn.
-        <br> <br>
-
-        Get in contact at <a href="mailto:tobyhutchinson@gmail.com">tobyhutchinson@gmail.com</a>.<br><br>
-        </p>
-
-        <div id="media-container">
-          <div id="instagram" class="media-link">
-            <a href="https://www.instagram.com/toaderone"><img src="assets/instagram.svg" alt="Instagram"></a>
-          </div>
-          <div id="github" class="media-link">
-            <a href="https://www.github.com/toblaroni"><img src="assets/github.svg" alt="Instagram"></a>
-          </div>
-          <div id="linkedin" class="media-link">
-            <a href="https://www.linkedin.com/in/tobias-hutchinson/"><img src="assets/linkedin.svg" alt="LinkedIn"></a>
-          </div>
-        </div>
-      </div>
-      <div class="info-container-child" id="work">
-        <h2>WORK</h2>
-        <p>
-          <a href="https://toblaroni.pythonanywhere.com">MealerDealer.</a> <br>
-            This is my first time making a web application. It was coded using flask. It incorporates a 
-            many to many relationship and AJAX. Users can enter their meal deals, like other peoples meal deals and 
-            create a collection of meal deals which they can view. Users can also change their passwords. <br><br><br>          
-
-          <a href="https://www.toader.xyz">www.toader.xyz</a><br> Website for myself. <br>
-           This website was also coded by me with HTML, CSS and JS (Using the P5.js library). <br><br><br>
-
-          <a href="https://www.ramz.fun">www.ramz.fun</a><br> Website for ram-z (DJ). <br> This website was coded by me with HTML, CSS and JS (Using the P5.js library). <br><br><br>
-
-          <a href="https://www.grovemusic.xyz">www.grovemusic.xyz</a> (WIP)<br>Website for GRØVE (Producer and DJ). <br>
-          This website is audio-reactive was also coded by me with HTML, CSS and JS (Using the P5.js library). <br>
-          <br><br>
-
-          <a href="https://toblaroni.github.io/checkbox-ripple">Checkbox Ripple</a><br>
-          Quick idea coded in HTML, CSS and Vanilla Javascript. 
-        </p>
-      </div>
-    </div>
-  </section>
-  <a href="#body"><img src="assets/arrow-up.svg" alt="up arrow" id="up-arrow"></a>
-
-  <script src="lib/p5.js"></script>
-  <script src="sketches/toadType.js"></script>
-  <!-- <script src="sketches/lorenz.js"></script> -->
+<body>
+  <div id="canvas-container">
+    <canvas id="canvas" width="700" height="700"></canvas>
+  </div>
 </body>
 </html>
