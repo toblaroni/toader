@@ -12,27 +12,7 @@ async function openDB() {
     return db;
 }
 
-/*
-const createTableQuery = `
-    CREATE TABLE IF NOT EXISTS canvases (
-        canvas_id INTEGER PRIMARY KEY,
-        canvas_string NOT NULL UNIQUE
-    );
-`
-db.serialize(() => {
-    db.run(createTableQuery, err => {
-        if (err) return console.error(err.message);
-        console.log("Created table successfully.")
-    });
-
-    db.all(`SELECT * FROM canvases`, [], (err, rows) => {
-        if (err) throw err;
-        rows.forEach(row => console.log(row));
-    });
-});
-*/
-
-function closeDb(db) {
+function closeDB(db) {
     db.close(err => {
         if (err) {
             console.error(err.message);
@@ -48,12 +28,33 @@ export async function insertCanvas(canvas_str) {
 
     db.serialize(() => {
         // Insert the canvas string into db
-        let insertSQL = `INSERT INTO canvases(canvas_string) VALUES(?)`
+        let insertSQL = `INSERT INTO canvases(canvas_string) VALUES(?)`;
 
         db.run(insertSQL, [canvas_str], err => {
             if (err) return console.error(err.message);
-        })
+        });
 
-        closeDb(db)
+        closeDB(db);
+    });
+}
+
+// Get the latest canvas
+export function fetchLastCanvas() {
+    return new Promise(async (resolve, reject) => {
+        let db = await openDB();
+
+        db.serialize(async () => {
+            db.get('SELECT * FROM canvases ORDER BY canvas_id DESC LIMIT 1', [],
+                (err, row) => {
+                    if (err) {
+                        console.error(err.message);
+                        closeDB(db);
+                        reject();
+                    }
+                    closeDB(db);
+                    resolve({canvasStr: row.canvas_string});
+                })
+        });
+
     })
 }

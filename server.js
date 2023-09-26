@@ -1,4 +1,4 @@
-import { insertCanvas } from "./database.js";
+import { insertCanvas, fetchLastCanvas } from "./database.js";
 import http from "http";
 const port = 8080;
 
@@ -15,7 +15,7 @@ function saveCanvas(body) {
     }
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
     // For CORS
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -24,14 +24,18 @@ const server = http.createServer((req, res) => {
 
     let body = '';
 
-    req.on("data", (chunk) => {
-        body += chunk;
-    });
+    if (req.url === "/api/saveCanvas" && req.method === "POST") {
+        req.on("data", (chunk) => {
+            body += chunk;
+        });
 
-    req.on("end", () => saveCanvas(body));
+        req.on("end", () => saveCanvas(body));
+    }
 
     if (req.url === "/api/getCanvas" && req.method === "GET") {
         // Fetching the latest canvas
+        res.write(JSON.stringify(await fetchLastCanvas()))
+        // res.write(canvas.canvasStr);
     }
 
     res.end();

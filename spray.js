@@ -6,6 +6,27 @@ ctx.imageSmoothingEnabled = true;
 
 let drawing = false;
 
+
+async function getLatestCanvas() {
+    // Fetch the latest canvas
+    const response = await fetch('http://127.0.0.1:8080/api/getCanvas', {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        },
+    });
+    const body = await response.json();
+
+    // Make an image
+    const img = new Image();
+    img.src = body.canvasStr;
+
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0);
+
+    }
+}
+
 function getMouseCoords(element, event) {
     return {
         mouseX: event.clientX - canvas.offsetLeft,
@@ -48,6 +69,7 @@ async function saveCanvas(e) {
     // console.log(response.json());
 }
 
+document.addEventListener("DOMContentLoaded", getLatestCanvas);
 saveBtn.addEventListener("submit", saveCanvas);
 canvas.addEventListener("mousedown", beginDraw);
 canvas.addEventListener("mouseup", () => drawing = false);
