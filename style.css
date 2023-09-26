@@ -26,16 +26,23 @@ html, body {
 
 canvas {
   border: 1px solid black;
-  border-radius: 2%;
+  border-radius: 50%;
 }
 
-#save-button {
+button {
   cursor: pointer;
   margin-top: 20px;
   padding: 10px;
   border: none;
   color: white;
-  border-radius: 10%;
+  border-radius: 10px;
   font-size: large;
   background-color: green;
+}
+
+#buttons-container {
+  display: flex;
+  float: left;
+  width: 25%;
+  justify-content: space-around;
 }

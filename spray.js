@@ -1,10 +1,20 @@
 const canvas = document.getElementById("canvas");
 const saveBtn = document.getElementById("save-canvas");
+const changeClrBtn = document.getElementById("change-colour");
 
 const ctx = canvas.getContext("2d");
+ctx.lineCap = "round";
+ctx.lineWidth = "20";
 ctx.imageSmoothingEnabled = true;
 
 let drawing = false;
+const colours = ["#ffffff", "#ff0000", "#00ff00", "#0000ff", "#000000"];
+
+document.addEventListener("DOMContentLoaded", () => {
+    getLatestCanvas()
+    // Random color
+    ctx.strokeStyle = colours[Math.floor(Math.random()*colours.length)]
+});
 
 
 async function getLatestCanvas() {
@@ -22,8 +32,8 @@ async function getLatestCanvas() {
     img.src = body.canvasStr;
 
     img.onload = function() {
-        ctx.drawImage(img, 0, 0);
-
+        if (body.canvasStr) 
+            ctx.drawImage(img, 0, 0);
     }
 }
 
@@ -69,8 +79,8 @@ async function saveCanvas(e) {
     // console.log(response.json());
 }
 
-document.addEventListener("DOMContentLoaded", getLatestCanvas);
 saveBtn.addEventListener("submit", saveCanvas);
 canvas.addEventListener("mousedown", beginDraw);
 canvas.addEventListener("mouseup", () => drawing = false);
 canvas.addEventListener("mousemove", draw);
+changeClrBtn.addEventListener("click", () => ctx.strokeStyle = colours[Math.floor(Math.random()*colours.length)]);

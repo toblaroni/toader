@@ -9,6 +9,8 @@
 - [ ] Create mop drip effect
 - [ ] Spray Can effect
 - [ ] Different paint sizes
-- [ ] Random color every time page loads 
+- [x] Random color every time page loads 
 - [ ] Refactoring
+- [ ] Mobile stuff
 - [ ] Testing
+- [ ] Host
