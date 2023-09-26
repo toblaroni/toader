@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "********************************* PERSONAL WEBSITE ***********************************",
   "main": "server.js",
+  "type": "module",
   "directories": {
     "lib": "lib"
   },

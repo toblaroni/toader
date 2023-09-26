@@ -1,13 +1,18 @@
-const { create } = require("domain");
-
-const sqlite3 = require("sqlite3").verbose();
+import sql from "sqlite3";
+const sqlite3 = sql.verbose();
 
 // Open the db
-let db = new sqlite3.Database("./db/canvases.db", err => {
-    if (err) return console.error(err.message);
-    console.log("Connected to database")
-})
+async function openDB() {
+    let db = new sqlite3.Database("./db/canvases.db", err => {
+        if (err) {
+            console.error(err.message);
+            exit(-1);
+        }
+    });
+    return db;
+}
 
+/*
 const createTableQuery = `
     CREATE TABLE IF NOT EXISTS canvases (
         canvas_id INTEGER PRIMARY KEY,
@@ -25,9 +30,30 @@ db.serialize(() => {
         rows.forEach(row => console.log(row));
     });
 });
+*/
 
+function closeDb(db) {
+    db.close(err => {
+        if (err) {
+            console.error(err.message);
+            exit(-1)
+        }
+    })
+}
 
-db.close(err => {
-    if (err) return console.error(err.message);
-    console.log("Closed the database");
-});
+// Function for inserting a new canvas string
+export async function insertCanvas(canvas_str) {
+    // Open db
+    let db = await openDB();
+
+    db.serialize(() => {
+        // Insert the canvas string into db
+        let insertSQL = `INSERT INTO canvases(canvas_string) VALUES(?)`
+
+        db.run(insertSQL, [canvas_str], err => {
+            if (err) return console.error(err.message);
+        })
+
+        closeDb(db)
+    })
+}

@@ -1,4 +1,5 @@
-const http = require("http");
+import { insertCanvas } from "./database.js";
+import http from "http";
 const port = 8080;
 
 
@@ -7,7 +8,7 @@ function saveCanvas(body) {
     try {
         const bodyData = JSON.parse(body);
         // Save the canvas
-        console.log(bodyData)
+        insertCanvas(bodyData.canvasStr);
 
     } catch (error) {
         console.log(error)
