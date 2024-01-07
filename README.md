@@ -1,7 +1,6 @@
 
 # Toader
 
-
 ## Todo list for the spray canvas
 - [x] Adding canvas strings to the db
 - [x] Fetching and displaying the most recent canvas

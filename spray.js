@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById("canvas");
 const saveBtn = document.getElementById("save-canvas");
 const changeClrBtn = document.getElementById("change-colour");
@@ -42,21 +41,21 @@ function drip() {
     ctx.beginPath()
     requestAnimationFrame(drip);
 }
-drip();
 
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    getLatestCanvas();
+document.addEventListener("DOMContentLoaded", async () => {
+    await startDb();
     randomColor();
+    drip();
 });
 
 
-async function getLatestCanvas() {
+async function startDb() {
     // Fetch the latest canvas
-    const response = await fetch('http://127.0.0.1:8080/api/getCanvas', {
+    const response = await fetch('http://127.0.0.1:8080/api/startDb', {
         method: "GET",
         headers: {
             "Content-Type": "application/json"

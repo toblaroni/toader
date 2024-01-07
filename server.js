@@ -1,4 +1,4 @@
-import { insertCanvas, fetchLastCanvas } from "./database.js";
+import { insertCanvas, startDb } from "./database.js";
 import http from "http";
 const port = 8080;
 
@@ -32,9 +32,9 @@ const server = http.createServer(async (req, res) => {
         req.on("end", () => saveCanvas(body));
     }
 
-    if (req.url === "/api/getCanvas" && req.method === "GET") {
+    if (req.url === "/api/startDb" && req.method === "GET") {
         // Fetching the latest canvas
-        res.write(JSON.stringify(await fetchLastCanvas()))
+        res.write(JSON.stringify(await startDb()))
         // res.write(canvas.canvasStr);
     }
 
