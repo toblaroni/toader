@@ -7,15 +7,41 @@ ctx.lineCap = "round";
 ctx.lineWidth = "20";
 ctx.imageSmoothingEnabled = true;
 
-const drippiness = 0.25;
 let drawing = false;
 
 // Array of all the drips
 let dripArr = [];
 
+
+function createDrip(e) {
+    let {mouseX, mouseY} = getMouseCoords(canvas, e);
+
+    // Create drip
+    // Each drip is an object
+    const drippiness = 0.25;
+    let makeDrip = Math.random();  // Random chance of creating a drip
+
+    if (makeDrip < drippiness)
+        newDrip(mouseX, mouseY);
+}
+
+function newDrip(mouseX, mouseY) {
+    dripArr.push({
+        x: mouseX,
+        y: mouseY,
+        dead: false,
+        length: Math.round(Math.random()*200)+5,
+        cLength: 0, // Current length of the drip
+        radius: Math.round(Math.random()*3)+2,
+        colour: ctx.strokeStyle,
+        dripSpeed: Math.random()*2+0.1
+    })
+}
+
 // Animate drips
 function drip() {
     // Loop the drips
+    console.log(dripArr[0])
     for (let i = 0; i < dripArr.length; i++) {
         let d = dripArr[i];
 
@@ -25,7 +51,7 @@ function drip() {
         ctx.arc(d.x, d.y, d.radius, 0, 2*Math.PI);
         ctx.fill();
 
-        if (d.cLength >= d.length) d.dead = true;
+        d.dead = d.cLength >= d.length;
 
         // Increment the y val and current length
         d.y += d.dripSpeed;
@@ -41,6 +67,7 @@ function drip() {
     ctx.beginPath()
     requestAnimationFrame(drip);
 }
+drip();
 
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -49,7 +76,6 @@ function clearCanvas() {
 document.addEventListener("DOMContentLoaded", async () => {
     await startDb();
     randomColor();
-    drip();
 });
 
 
@@ -86,24 +112,6 @@ function beginDraw(e) {
     draw(e);
 }
 
-function createDrip(e) {
-    let {mouseX, mouseY} = getMouseCoords(canvas, e);
-    // Create drip
-    // Each drip is an object
-    let makeDrip = Math.random();
-    if (makeDrip < drippiness) {
-        dripArr.push({
-            x: mouseX,
-            y: mouseY,
-            dead: false,
-            length: Math.round(Math.random()*200)+5,
-            cLength: 0, // Current length of the drip
-            radius: Math.round(Math.random()*3)+2,
-            colour: ctx.strokeStyle,
-            dripSpeed: Math.random()*2+0.1
-        })
-    }
-}
 
 function draw(e) {
     if (drawing == false) return;

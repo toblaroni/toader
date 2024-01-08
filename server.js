@@ -1,4 +1,4 @@
-import { insertCanvas, startDb } from "./database.js";
+import { insertCanvas, fetchLastCanvas } from "./database.js";
 import http from "http";
 const port = 8080;
 
@@ -34,8 +34,13 @@ const server = http.createServer(async (req, res) => {
 
     if (req.url === "/api/startDb" && req.method === "GET") {
         // Fetching the latest canvas
-        res.write(JSON.stringify(await startDb()))
-        // res.write(canvas.canvasStr);
+        try {
+            // const canvas_string = await startDb();
+            res.write(JSON.stringify(await fetchLastCanvas()));
+
+        } catch (error) {
+            console.error("Error occurred while starting the database: ", error);
+        }
     }
 
     res.end();
