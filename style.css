@@ -5,6 +5,38 @@
     box-sizing: border-box;
 }
 
-#name, #about, #projects {
-    border: 1px solid black;
+#container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
+
+#name, #about, #contact {
+    border: 2px dashed #ccc;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#name {
+    border-top: none;
+    border-left: none;
+    border-bottom: none;
+    border-right: none;
+}
+
+#about {
+    border-right: none;
+    border-top: none;
+}
+
+#contact {
+    border-left: none;
+    border-bottom: none;
+    justify-content: space-evenly;
+}
+
