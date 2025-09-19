@@ -40,7 +40,11 @@ body {
 #about {
     border-right: none;
     border-top: none;
-    padding: 2vw;
+    flex-direction: column;
+}
+
+.icon {
+    color: var(--complimentary-color);
 }
 
 #contact {
@@ -48,4 +52,5 @@ body {
     border-bottom: none;
     justify-content: space-evenly;
 }
+
 
