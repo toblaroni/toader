@@ -1,8 +1,16 @@
+:root {
+    --primary-color: hsl(200, 50%, 50%);
+    --complimentary-color: hsl(20, 50%, 50%);   /* These get updated in js */
+}
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+body {
+    background-color: var(--primary-color);
 }
 
 #container {
@@ -14,8 +22,8 @@
 }
 
 #name, #about, #contact {
-    border: 2px dashed #ccc;
-
+    border: 2px dashed var(--complimentary-color);
+    color: var(--complimentary-color);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -32,6 +40,7 @@
 #about {
     border-right: none;
     border-top: none;
+    padding: 2vw;
 }
 
 #contact {
