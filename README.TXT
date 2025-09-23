@@ -9,6 +9,8 @@ NEED TO REMAKE THIS WEBSITE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 TODO:
 
 - [x] The typing of "I'm currently..." 
+- [/] Random font - looks bad...
 - [ ] A button that user can press to generate a new site layout
-- [ ] Random font
 - [ ] Mobile version
+    - [] Tilt effect?
+- [ ] Little info button to explain what's going on

@@ -41,6 +41,12 @@ body {
     border-right: none;
     border-top: none;
     flex-direction: column;
+    text-align: left;
+}
+
+#about p:nth-of-type(2) {
+    text-align: left;
+    margin-top: 1rem;
 }
 
 .icon {
