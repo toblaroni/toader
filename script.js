@@ -1,4 +1,4 @@
-const min_percentage = 0.3;
+const min_percentage = 0.35;
 const max_percentage = 1 - min_percentage;
 
 const current_activities = [
@@ -6,7 +6,7 @@ const current_activities = [
     "learning the piano",
     "writing code",
     "listening to NTS radio",
-    "having a coffee",
+    "drinking a coffee",
     "learning Fusion 360",
     "doing a handstand",
     "playing Red Dead Redemption 2",
@@ -150,10 +150,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Adjust font size based off the container width and view width
-    name_div.style.fontSize = 0.13 * name_width * window.innerWidth + "px";
+    name_div.style.fontSize = 0.15 * name_width * window.innerWidth + "px";
     name_div.style.padding = 0.03 * name_width * window.innerWidth + "px";
     about_div.style.fontSize = 0.055 * (1 - name_width) * window.innerWidth + "px";
-    about_div.style.padding = 0.05 * (1 - name_width) * window.innerWidth + "px";
+    about_div.style.padding = 0.06 * (1 - name_width) * window.innerWidth + "px";
 
     // Adjust icon sizes
     const icons = contact_div.querySelectorAll("svg");

@@ -11,6 +11,7 @@
 
 body {
     background-color: var(--primary-color);
+    font-family: 'Old Standard TT', serif;
 }
 
 #container {
@@ -35,6 +36,8 @@ body {
     border-left: none;
     border-bottom: none;
     border-right: none;
+    font-weight: 700;
+    line-height: 1;
 }
 
 #about {
@@ -42,6 +45,7 @@ body {
     border-top: none;
     flex-direction: column;
     text-align: left;
+    line-height: 1.1;
 }
 
 #about p:nth-of-type(2) {
