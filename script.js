@@ -1,5 +1,11 @@
-const min_percentage = 0.35;
+const min_percentage = 0.37;
 const max_percentage = 1 - min_percentage;
+
+const root = document.documentElement;
+const name_div = document.getElementById("name");
+const about_div = document.getElementById("about");
+const contact_div = document.getElementById("contact");
+const dice_div = document.getElementById("dice-container");
 
 const current_activities = [
     "reading A Portrait of the Artist as a Young Man",
@@ -90,18 +96,7 @@ function generate_complimentary_colors(requirement) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const root = document.documentElement;
-    const name_div = document.getElementById("name");
-    const about_div = document.getElementById("about");
-    const contact_div = document.getElementById("contact");
-    
-    // === Generate random color scheme ===
-    let [primary_color, complimentary_color] = generate_complimentary_colors(7); // Could change the requirement based off the size of the screen
-
-    root.style.setProperty("--primary-color", `rgb(${primary_color[0]}, ${primary_color[1]}, ${primary_color[2]})`);
-    root.style.setProperty("--complimentary-color", `rgb(${complimentary_color[0]}, ${complimentary_color[1]}, ${complimentary_color[2]})`);
-
+function generate_3_box_layout() {
     // === Generate random 3-box layout ===
     // Start at top left corner
     name_div.style.position = "absolute";
@@ -151,9 +146,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Adjust font size based off the container width and view width
     name_div.style.fontSize = 0.15 * name_width * window.innerWidth + "px";
-    name_div.style.padding = 0.03 * name_width * window.innerWidth + "px";
-    about_div.style.fontSize = 0.055 * (1 - name_width) * window.innerWidth + "px";
-    about_div.style.padding = 0.06 * (1 - name_width) * window.innerWidth + "px";
+    // name_div.style.padding = 0.02 * name_width * window.innerWidth + "px";
+    about_div.style.fontSize = 0.051 * (1 - name_width) * window.innerWidth + "px";
+    about_div.style.padding = 0.09 * (1 - name_width) * window.innerWidth + "px";
 
     // Adjust icon sizes
     const icons = contact_div.querySelectorAll("svg");
@@ -164,7 +159,32 @@ document.addEventListener("DOMContentLoaded", function () {
         icon.style.width = "auto";
     });
 
+    // === Style dice ===
+    dice_div.style.position = "absolute";
+    dice_div.style.top = `${name_div_height}px`;
+    dice_div.style.left = `${name_div_width}px`;
+    dice_div.style.transform = "translate(-50%, -50%)";
+    dice_div.style.backgroundColor = "var(--primary-color)";
+}
 
+document.addEventListener("DOMContentLoaded", function () {
+    
+    // === Generate random color scheme ===
+    let [primary_color, complimentary_color] = generate_complimentary_colors(7); // Could change the requirement based off the size of the screen
+
+    root.style.setProperty("--primary-color", `rgb(${primary_color[0]}, ${primary_color[1]}, ${primary_color[2]})`);
+    root.style.setProperty("--complimentary-color", `rgb(${complimentary_color[0]}, ${complimentary_color[1]}, ${complimentary_color[2]})`);
+
+    // === Generate random 3 box layout for big screens
+    if (window.innerWidth > 1024) {
+        generate_3_box_layout();
+    } else if (window.innerWidth > 768) { 
+        // Different layout 
+    } else {
+        // Small screen layout
+    }
+
+    // === Typewriter effect ===
     let i = 0;
     const speed = 55;
     const wait_time = 2000;
@@ -198,4 +218,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     typeWriter();
+});
+
+
+document.getElementById("dice").addEventListener("click", () => {
+    // Regenerate everything
+    let [primary_color, complimentary_color] = generate_complimentary_colors(7);
+
+    root.style.setProperty("--primary-color", `rgb(${primary_color[0]}, ${primary_color[1]}, ${primary_color[2]})`);
+    root.style.setProperty("--complimentary-color", `rgb(${complimentary_color[0]}, ${complimentary_color[1]}, ${complimentary_color[2]})`);
+
+    if (window.innerWidth > 1024) {
+        generate_3_box_layout();
+    }
 });

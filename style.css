@@ -29,6 +29,7 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
+    cursor: default;
 }
 
 #name {
@@ -37,7 +38,7 @@ body {
     border-bottom: none;
     border-right: none;
     font-weight: 700;
-    line-height: 1;
+    line-height: 0.99;
 }
 
 #about {
@@ -55,6 +56,19 @@ body {
 
 .icon {
     color: var(--complimentary-color);
+}
+
+#dice-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+#dice {
+    width: 2rem;
+    height: auto;
+    cursor: pointer;
 }
 
 #contact {
