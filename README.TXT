@@ -9,7 +9,7 @@ NEED TO REMAKE THIS WEBSITE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 TODO:
 
 - [x] The typing of "I'm currently..." 
-- [ ] A button that user can press to generate a new site layout
+- [x] A button that user can press to generate a new site layout
 - [ ] Mobile version
     - [] Tilt effect?
 - [ ] Make responsive

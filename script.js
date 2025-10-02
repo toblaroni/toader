@@ -128,20 +128,24 @@ function generate_3_box_layout() {
         // Fit to right side
         about_div.style.width = `${window.innerWidth - name_div_width}px`;
         about_div.style.height = `${name_div_height}px`;
-        about_div.style.borderBottom = "none";
+        about_div.style.borderWidth = "0px 0px 0px 2px"
+        about_div.style.zIndex = "50";
 
         contact_div.style.width = `${window.innerWidth}px`;
         contact_div.style.height = `${window.innerHeight - name_div_height}px`;
-        contact_div.style.borderRight = "none";
+        contact_div.style.borderWidth = "2px 0px 0px 0px";
+        contact_div.style.zIndex = "100";
     } else {
         // Fit to bottom
         about_div.style.width = `${window.innerWidth - name_div_width}px`;
         about_div.style.height = `${window.innerHeight}px`;
-        about_div.style.borderBottom = "none";
+        about_div.style.borderWidth = "0px 0px 0px 2px";
+        about_div.style.zIndex = "100";
 
         contact_div.style.width = `${name_div_width}px`;
         contact_div.style.height = `${window.innerHeight - name_div_height}px`;
-        contact_div.style.borderRight = "none";
+        contact_div.style.borderWidth = "2px 0px 0px 0px";
+        contact_div.style.zIndex = "50";
     }
 
     // Adjust font size based off the container width and view width
@@ -180,7 +184,6 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (window.innerWidth > 768) { 
         // Different layout 
     } else {
-        // Small screen layout
     }
 
     // === Typewriter effect ===
