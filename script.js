@@ -10,13 +10,13 @@ const dice_div = document.getElementById("dice-container");
 const current_activities = [
     "reading A Portrait of the Artist as a Young Man",
     "learning the piano",
+    "playing chess",
     "writing code",
     "listening to NTS radio",
     "drinking a coffee",
     "learning Fusion 360",
     "doing a handstand",
     "playing Red Dead Redemption 2",
-    "playing chess",
     "drawing"
 ]
 
@@ -145,7 +145,7 @@ function generate_3_box_layout() {
     }
 
     // Adjust font size based off the container width and view width
-    name_div.style.fontSize = 0.15 * name_width * window.innerWidth + "px";
+    name_div.style.fontSize = 0.14 * name_width * window.innerWidth + "px";
     // name_div.style.padding = 0.02 * name_width * window.innerWidth + "px";
     about_div.style.fontSize = 0.051 * (1 - name_width) * window.innerWidth + "px";
     about_div.style.padding = 0.09 * (1 - name_width) * window.innerWidth + "px";
@@ -164,7 +164,6 @@ function generate_3_box_layout() {
     dice_div.style.top = `${name_div_height}px`;
     dice_div.style.left = `${name_div_width}px`;
     dice_div.style.transform = "translate(-50%, -50%)";
-    dice_div.style.backgroundColor = "var(--primary-color)";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -231,4 +230,9 @@ document.getElementById("dice").addEventListener("click", () => {
     if (window.innerWidth > 1024) {
         generate_3_box_layout();
     }
+});
+
+// Remove the "no-transitions" class after the first frame
+window.addEventListener("load", () => {
+  document.body.classList.remove("no-transition");
 });

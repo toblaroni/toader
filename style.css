@@ -3,6 +3,11 @@
     --complimentary-color: hsl(20, 50%, 50%);   /* These get updated in js */
 }
 
+:root {
+  transition: --primary-color 0.6s ease-in-out,
+              --complimentary-color 0.6s ease-in-out;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -12,6 +17,7 @@
 body {
     background-color: var(--primary-color);
     font-family: 'Old Standard TT', serif;
+    color: var(--complimentary-color);
 }
 
 #container {
@@ -22,7 +28,18 @@ body {
     text-align: center;
 }
 
-#name, #about, #contact {
+#dice-container {
+    background-color: var(--primary-color);
+    color: var(--complimentary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 50%;
+}
+
+#name, #about, #contact  {
+    background-color: var(--primary-color);
     border: 2px dashed var(--complimentary-color);
     color: var(--complimentary-color);
     display: flex;
@@ -30,6 +47,11 @@ body {
     align-items: center;
     text-align: center;
     cursor: default;
+}
+
+
+#name, #about, #contact, #dice-container, svg, body {
+  transition: all 0.7s ease-in-out; /* smooth transition */
 }
 
 #name {
@@ -58,17 +80,11 @@ body {
     color: var(--complimentary-color);
 }
 
-#dice-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-}
-
 #dice {
     width: 2rem;
     height: auto;
     cursor: pointer;
+    background-color: transparent;
 }
 
 #contact {
@@ -77,6 +93,6 @@ body {
     justify-content: space-evenly;
 }
 
-
-
-
+.no-transition * {
+  transition: none !important; /* disable transition initially */
+}
