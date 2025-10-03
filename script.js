@@ -96,7 +96,7 @@ function generate_complimentary_colors(requirement) {
     }
 }
 
-function generate_3_box_layout() {
+function generate_3_box_layout(medium_screen) {
     // === Generate random 3-box layout ===
     // Start at top left corner
     name_div.style.position = "absolute";
@@ -104,8 +104,12 @@ function generate_3_box_layout() {
     name_div.style.left = "0px";
 
     // Choose random width and height of first div
-    let name_width = Math.random() * (max_percentage - min_percentage) + min_percentage;
-    let name_height = Math.random() * (max_percentage - min_percentage) + min_percentage;
+    let name_width = medium_screen ? 
+        Math.random() * (max_percentage-0.2 - min_percentage) + min_percentage + 0.1 : 
+        Math.random() * (max_percentage - min_percentage) + min_percentage;
+    let name_height = medium_screen ? 
+        Math.random() * (max_percentage - min_percentage) + min_percentage+0.1 : 
+        Math.random() * (max_percentage - min_percentage) + min_percentage;
 
     let name_div_width = window.innerWidth * name_width;
     let name_div_height = window.innerHeight * name_height;
@@ -149,19 +153,32 @@ function generate_3_box_layout() {
     }
 
     // Adjust font size based off the container width and view width
-    name_div.style.fontSize = 0.14 * name_width * window.innerWidth + "px";
+    name_div.style.fontSize = medium_screen ? 
+        0.15 * name_width * window.innerWidth + "px" :
+        0.14 * name_width * window.innerWidth + "px";
     // name_div.style.padding = 0.02 * name_width * window.innerWidth + "px";
-    about_div.style.fontSize = 0.051 * (1 - name_width) * window.innerWidth + "px";
-    about_div.style.padding = 0.09 * (1 - name_width) * window.innerWidth + "px";
+    about_div.style.fontSize = medium_screen ? 
+        0.08 * (1 - name_width) * window.innerWidth + "px" :
+        0.051 * (1 - name_width) * window.innerWidth + "px";
+    about_div.style.padding = medium_screen ? 
+        0.12 * (1 - name_width) * window.innerWidth + "px" :
+        0.09 * (1 - name_width) * window.innerWidth + "px";
 
     // Adjust icon sizes
     const icons = contact_div.querySelectorAll("svg");
     icons.forEach((icon) => {
-        icon.style.height = right_side ? 
-            0.04 * window.innerWidth + "px" : 
-            0.03 * window.innerWidth + "px";
+        if (!medium_screen) {
+            icon.style.height = right_side ? 
+                0.04 * window.innerWidth + "px" :
+                0.03 * window.innerWidth + "px";
+        } else {
+            icon.style.height = right_side ? 
+                0.07 * window.innerWidth + "px" :
+                0.05 * window.innerWidth + "px";
+        }
         icon.style.width = "auto";
     });
+
 
     // === Style dice ===
     dice_div.style.position = "absolute";
@@ -180,11 +197,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // === Generate random 3 box layout for big screens
     if (window.innerWidth > 1024) {
-        generate_3_box_layout();
+        generate_3_box_layout(false);
     } else if (window.innerWidth > 768) { 
         // Different layout 
-    } else {
-    }
+        generate_3_box_layout(true);
+    } 
 
     // === Typewriter effect ===
     let i = 0;
@@ -231,8 +248,11 @@ document.getElementById("dice").addEventListener("click", () => {
     root.style.setProperty("--complimentary-color", `rgb(${complimentary_color[0]}, ${complimentary_color[1]}, ${complimentary_color[2]})`);
 
     if (window.innerWidth > 1024) {
-        generate_3_box_layout();
-    }
+        generate_3_box_layout(false);
+    } else if (window.innerWidth > 768) { 
+        // Always do bottom layout
+        generate_3_box_layout(true);
+    } 
 });
 
 // Remove the "no-transitions" class after the first frame
