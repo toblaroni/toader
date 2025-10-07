@@ -16,7 +16,8 @@
 
 html, body {
     width: 100%;
-    height: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -156,21 +157,4 @@ body {
     #dice {
         width: 5.3vw;
     }
-}
-
-* {
-  outline: 1px solid rgba(255, 0, 0, 0.2);
-}
-
-/* Visually show when something overflows horizontally */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 100vw;
-  width: 2px;
-  height: 100vh;
-  background: red;
-  pointer-events: none;
-  z-index: 9999;
 }
