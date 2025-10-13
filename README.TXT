@@ -6,7 +6,6 @@ TODO:
 - [x] Mobile version
     - [] Tilt effect?
 
-- [x] Typewriter effect
 - [x] A button that user can press to generate a new site layout
 - [x] Medium size screen version
 

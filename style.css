@@ -119,13 +119,13 @@ body {
     }
 
     #name {
-        font-size: 11.5vw;
+        font-size: 15vw;
         flex: 0.3;
     }
 
     #about {
         padding: 5vw;
-        font-size: 6.6vw;
+        font-size: 9.5vw;
         flex: 0.5;
     }
 
