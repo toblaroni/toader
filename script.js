@@ -7,19 +7,6 @@ const about_div = document.getElementById("about");
 const contact_div = document.getElementById("contact");
 const dice_div = document.getElementById("dice-container");
 
-const current_activities = [
-    "reading A Portrait of the Artist as a Young Man",
-    "learning the piano",
-    "playing chess",
-    "writing code",
-    "listening to NTS radio",
-    "drinking a coffee",
-    "learning Fusion 360",
-    "doing a handstand",
-    "playing Red Dead Redemption 2",
-    "drawing"
-]
-
 function hsl_to_rgb(h, s, l) {
 
     // Normalise h, s and l
@@ -203,40 +190,6 @@ document.addEventListener("DOMContentLoaded", function () {
         generate_3_box_layout(true);
     } 
 
-    // === Typewriter effect ===
-    let i = 0;
-    const speed = 55;
-    const wait_time = 2000;
-    const currently_span = document.getElementById("currently");
-    let activity_idx = Math.floor(Math.random() * current_activities.length);
-    let txt = current_activities[activity_idx];
-    let deleting = false;
-    function typeWriter() {
-        if (i < txt.length && !deleting) {
-            currently_span.innerHTML += txt.charAt(i);
-            i++;
-            setTimeout(typeWriter, speed);
-        } else if (i > 0 && deleting) {
-            currently_span.innerHTML = currently_span.innerHTML.slice(0, -1);
-            i--;
-            setTimeout(typeWriter, speed-10);
-        } else if (i == txt.length && !deleting) {
-            setTimeout(() => {
-                deleting = true;
-                typeWriter();
-            }, wait_time);
-        } else if (i == 0 && deleting) {
-            setTimeout(() => {
-                activity_idx = (activity_idx+1) % current_activities.length;
-                txt = current_activities[activity_idx];
-                deleting = false;
-                typeWriter();
-            }, 1000);
-
-        }
-    }
-
-    typeWriter();
 });
 
 
