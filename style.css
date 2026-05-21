@@ -27,11 +27,12 @@ body {
 #main-container {
     display: flex;
     flex-direction: row;
-    height: 100%;
+    justify-content: flex-start;
     width: 100%;
     max-width: 1000px;
-    margin-top: 20px;
+    margin-top: 15px;
     flex-wrap: wrap;    
+    align-content: flex-start;
 }
 
 .info-container {
@@ -41,6 +42,9 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    height: 20vh;
+    max-height: 360px;
+    overflow: auto;
 }
 
 ul {
@@ -49,11 +53,6 @@ ul {
     margin: 0;
 }
 
-#links {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
 
 .title {
     font-weight: bolder;
