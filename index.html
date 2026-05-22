@@ -2,41 +2,46 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <title>☺☺☺☺☺☺☺☺☺☺☺☺☺</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>☺☺☺☺☺☺☺☺☺☺☺☺☺</title>
 </head>
 
 <body>
-  <div id="main-container">
+    <div id="main-container">
 
-      <div class="info-container" id="about-container">
-        <p class="title">Toby Hutchinson</p>
-        <p id="about">
-          I'm a Computer Science graduate interested in programming, hardware and design.
-        </p>
-        <ul>
-          <li><a href="https://www.github.com/toblaroni">Github</a></li>
-          <li><a href="https://www.instagram.com/toaderone">Instagram</a></li>
-          <li><a href="https://www.linkedin.com/in/tobias-hutchinson/">LinkedIn</a></li>
-        </ul>
+        <div class="info-container" id="about-container">
+            <p class="title" id="name">Toby Hutchinson</p>
+            <!-- <p id="about">
+                I'm a Computer Science graduate interested in programming, hardware and design.
+            </p>
+            <ul>
+                <li><a href="https://www.github.com/toblaroni">Github</a></li>
+                <li><a href="https://www.instagram.com/toaderone">Instagram</a></li>
+                <li><a href="https://www.linkedin.com/in/tobias-hutchinson/">LinkedIn</a></li>
+            </ul> -->
+        </div>
+        <div class="info-container" id="projects-container">
+            <!-- <p class="title">Projects</p>
+            <ul>
+                <li><a href="#">UART Module in Verilog</a></li>
+                <li><a href="#">Signet Rings</a></li>
+                <li><a href="#">Syndicate Font</a></li>
+            </ul> -->
+        </div>
     </div>
-    <div class="info-container" id="projects-container">
-      <p class="title">Projects</p>
-      <ul>
-        <li><a href="#">UART Module in Verilog</a></li>
-        <li><a href="#">Signet Rings</a></li>
-        <li><a href="#">Syndicate Font</a></li>
-      </ul>
-    </div>
 
+    <div id="score">0</div>
 
-  </div>
-  <script src="lib/matter.min.js"></script>
-  <script src="script.js"></script>
+    <script src="lib/matter.min.js"></script>
+    <script src="lib/pathseg.js"></script>
+    <script src="lib/decomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/opentype.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

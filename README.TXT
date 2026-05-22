@@ -1,10 +1,11 @@
 ********************************* PERSONAL WEBSITE ***********************************                                                 
 
 TODO:
-- Simple layout
-- Ball game
-- moves texts 
-- high score tracking
-- Add projects
-- Light/dark/random mode
+- [x] Simple layout
+- [x] Ball game
+- [ ] moves texts 
+- [ ] high score tracking
+    - [ ] Confetti
+- [ ] Add projects
+- [ ] Light/dark/random mode
 
