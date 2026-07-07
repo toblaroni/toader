@@ -88,10 +88,11 @@ ul {
     bottom: 14px;
     z-index: 1200;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 30px;
     padding: 6px 10px;
     border-radius: 8px;
     color: var(--complimentary-color);
     pointer-events: none;
+    user-select: none;
 }
 
