@@ -2,8 +2,8 @@ const { Engine, World, Bodies, Body, Events } = Matter;
 
 const engine = Engine.create();
 const world = engine.world;
+engine.gravity.y = 0;
 engine.gravity.scale = 0.002;
-
 
 const complimentaryColor = getComputedStyle(document.documentElement)
     .getPropertyValue('--complimentary-color')
@@ -63,11 +63,16 @@ let textElements = {
     ]
 };
 
-function getCharWidth(char, font) {
-    const canvas = getCharWidth.canvas || (getCharWidth.canvas = document.createElement("canvas"));
+function getCharDimensions(char, font) {
+    const canvas = getCharDimensions.canvas || (getCharDimensions.canvas = document.createElement("canvas"));
     const context = canvas.getContext("2d");
     context.font = font;
-    return context.measureText(char).width;
+    const metrics = context.measureText(char);
+    return [ 
+        metrics.width, 
+        metrics.actualBoundingBoxAscent +
+        metrics.actualBoundingBoxDescent
+    ];
 }
 
 
@@ -77,22 +82,59 @@ for (let el of linkEls) {
     el.style.display = "none";
 }
 
+// this will store the initial and current position of each letter
+let letters = [];
+
 // Display the text in initial positions
 // We actually need to store positions of each character 
+// Also need to add polygons into the matter.js world
 const el = textElements.elements[0];
 let textLeft = el.position.left;
 let textTop = el.position.top;
-for (let char of textElements.elements[0].value) {
+
+for (let char of el.value) {
+    const [charWidth, charHeight] = getCharDimensions(char, el.styles.font);
+    if (char == " ") {
+        textLeft += charWidth;
+        continue;
+    }
+    
+    // Add letter to DOM
     let span = document.createElement("span");
-    const charWidth = getCharWidth(char, el.styles.font);
-    span.style.fontSize = el.styles.fontsize;
-    span.style.font = el.styles.font;
     span.textContent = char;
-    span.style.position = "absolute";
-    span.style.left = textLeft + "px";
-    span.style.top = textTop + "px";
+    Object.assign(span.style, {
+        fontSize: el.styles.fontsize,
+        font: el.styles.font,
+        position: "absolute",
+        left: textLeft + "px",
+        top: textTop + "px"
+    });
     document.body.appendChild(span);
-    textLeft += charWidth * 1.01; 
+
+    // Add body to the physics sim
+    const scaleDown = 0.8;
+    const body = Bodies.rectangle(
+        textLeft + charWidth/2, textTop + charHeight/2,
+        charWidth * scaleDown, charHeight * scaleDown,
+        {
+            restitution: 0.2,
+            friction: 0.1,
+        }
+    );
+    World.add(world, body);
+    console.log(body.position);
+
+    // Store initial position
+    letters.push({
+        el: span,
+        initX: textLeft,
+        initY: textTop,
+        width: charWidth,
+        height: charHeight,
+        body: body
+    })
+
+    textLeft += charWidth; 
 }
 
 // Create the ball in the DOM
@@ -115,7 +157,7 @@ function createBall() {
         ballRadius * 1.5 + Math.random() * (window.innerWidth - ballRadius * 1.5),
         window.innerHeight / 2,
         ballRadius,
-        { restitution: 0.2, friction: 0.05, render: { fillStyle: complimentaryColor } }
+        { restitution: 0.2, friction: 0.05}
     );
 } 
 
@@ -209,6 +251,16 @@ function renderScore() {
     if (scoreEl) scoreEl.textContent = String(score);
 }
 
+
+Events.on(engine, "beforeUpdate", () => {
+    if (!ball) return;
+
+    Body.applyForce(ball, ball.position, {
+        x: 0,
+        y: ball.mass * engine.gravity.scale
+    });
+});
+
 function renderLoop() {
     Engine.update(engine);
     // Render the ball
@@ -217,6 +269,11 @@ function renderLoop() {
             ${ball.position.x - ballRadius}px, 
             ${ball.position.y - ballRadius}px
         )`;
+    }
+
+    for (let letter of letters) {
+        letter.el.style.left = `${letter.body.position.x - letter.width/2}px`;
+        letter.el.style.top = `${letter.body.position.y - letter.height/2}px`; 
     }
 
     requestAnimationFrame(renderLoop);
