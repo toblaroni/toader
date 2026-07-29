@@ -16,7 +16,7 @@ let ball = null
 
 const scoreEl = document.getElementById('score');
 
-// === Create the text ===
+// Create the text
 const nameEl = document.getElementById("name");
 const aboutEl = document.getElementById("about");
 const linkEls = document.getElementsByClassName("contact-link");
@@ -112,13 +112,14 @@ for (let char of el.value) {
     document.body.appendChild(span);
 
     // Add body to the physics sim
-    const scaleDown = 0.8;
+    const scale = 1;
     const body = Bodies.rectangle(
         textLeft + charWidth/2, textTop + charHeight/2,
-        charWidth * scaleDown, charHeight * scaleDown,
+        charWidth * scale, charHeight * scale,
         {
-            restitution: 0.2,
+            restitution: 0.1,
             friction: 0.1,
+            frictionAir: 0.05
         }
     );
     World.add(world, body);
@@ -253,12 +254,26 @@ function renderScore() {
 
 
 Events.on(engine, "beforeUpdate", () => {
-    if (!ball) return;
+    if (ball) {
+        Body.applyForce(ball, ball.position, {
+            x: 0,
+            y: ball.mass * engine.gravity.scale
+        });
+    }
 
-    Body.applyForce(ball, ball.position, {
-        x: 0,
-        y: ball.mass * engine.gravity.scale
-    });
+    const k = 0.0000005;
+    for (const letter of letters) {
+        const targetX = letter.initX + letter.width/2;
+        const targetY = letter.initY + letter.height/2;
+
+        const dx = targetX - letter.body.position.x;
+        const dy = targetY - letter.body.position.y;
+
+        Body.applyForce(letter.body, letter.body.position, {
+            x: dx * k,
+            y: dy * k
+        });
+    }
 });
 
 function renderLoop() {
