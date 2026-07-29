@@ -16,10 +16,6 @@ let ball = null
 
 const scoreEl = document.getElementById('score');
 
-// Create the text
-const nameEl = document.getElementById("name");
-const aboutEl = document.getElementById("about");
-const linkEls = document.getElementsByClassName("contact-link");
 
 function getCssStyle(element, prop) {
     return window.getComputedStyle(element, null).getPropertyValue(prop);
@@ -34,34 +30,29 @@ function getCanvasFont(el) {
 }
 
 // Store position and value data
-let textElements = {
-    "elements": [
-        {
-            "value": nameEl.innerText,
-            "position": {
-                "top": nameEl.getBoundingClientRect().top,
-                "left": nameEl.getBoundingClientRect().left,
-                "width": nameEl.getBoundingClientRect().width
-            },
-            "styles": {
-                "font": getCanvasFont(nameEl),
-                "fontsize": getCssStyle(nameEl, "font-size")
-            }
+// Create the text
+const nameEl = document.getElementById("name");
+const aboutEl = document.getElementById("about");
+const linkEls = document.getElementsByClassName("contact-link");
+
+let textElements = [];
+for (const el of [nameEl, aboutEl, ...linkEls]) {
+    textElements.push({
+        "value": el.innerText,
+        "position": {
+            "top": el.getBoundingClientRect().top,
+            "left": el.getBoundingClientRect().left,
+            "width": el.getBoundingClientRect().width
         },
-        {
-            "value": aboutEl.innerText,
-            "position": {
-                "top": aboutEl.getBoundingClientRect().top,
-                "left": aboutEl.getBoundingClientRect().left,
-                "width": aboutEl.getBoundingClientRect().width
-            },
-            "styles": {
-                "font": getCanvasFont(aboutEl),
-                "fontsize": getCssStyle(aboutEl, "font-size")
-            }
-        }
-    ]
-};
+        "styles": {
+            "font": getCanvasFont(el),
+            "fontsize": getCssStyle(el, "font-size")
+        },
+        "href": el.getAttribute("href"),
+    });
+}
+
+
 
 function getCharDimensions(char, font) {
     const canvas = getCharDimensions.canvas || (getCharDimensions.canvas = document.createElement("canvas"));
@@ -75,7 +66,7 @@ function getCharDimensions(char, font) {
     ];
 }
 
-
+// Hide the elements
 nameEl.style.display = "none";
 aboutEl.style.display = "none";
 for (let el of linkEls) {
@@ -88,54 +79,74 @@ let letters = [];
 // Display the text in initial positions
 // We actually need to store positions of each character 
 // Also need to add polygons into the matter.js world
-const el = textElements.elements[0];
-let textLeft = el.position.left;
-let textTop = el.position.top;
 
-for (let char of el.value) {
-    const [charWidth, charHeight] = getCharDimensions(char, el.styles.font);
-    if (char == " ") {
-        textLeft += charWidth;
-        continue;
+for (const el of textElements) {
+    let textLeft = el.position.left;
+    let textTop = el.position.top;
+
+    let a = null;
+    if (el.href) {
+        a = document.createElement("a");
+        a.href = el.href;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
     }
-    
-    // Add letter to DOM
-    let span = document.createElement("span");
-    span.textContent = char;
-    Object.assign(span.style, {
-        fontSize: el.styles.fontsize,
-        font: el.styles.font,
-        position: "absolute",
-        left: textLeft + "px",
-        top: textTop + "px"
-    });
-    document.body.appendChild(span);
 
-    // Add body to the physics sim
-    const scale = 1;
-    const body = Bodies.rectangle(
-        textLeft + charWidth/2, textTop + charHeight/2,
-        charWidth * scale, charHeight * scale,
-        {
-            restitution: 0.1,
-            friction: 0.1,
-            frictionAir: 0.05
+    for (let char of el.value) {
+        const [charWidth, charHeight] = getCharDimensions(char, el.styles.font);
+        if (char == " ") {
+            textLeft += charWidth;
+            continue;
         }
-    );
-    World.add(world, body);
-    console.log(body.position);
+        
+        // Add letter to DOM
+        let span = document.createElement("span");
+        span.textContent = char;
 
-    // Store initial position
-    letters.push({
-        el: span,
-        initX: textLeft,
-        initY: textTop,
-        width: charWidth,
-        height: charHeight,
-        body: body
-    })
+        Object.assign(span.style, {
+            fontSize: el.styles.fontsize,
+            font: el.styles.font,
+            position: "absolute",
+            left: textLeft + "px",
+            top: textTop + "px",
+            userSelect: "none"
+        });
 
-    textLeft += charWidth; 
+        if (a) {
+            a.appendChild(span);
+        } else {
+            document.body.appendChild(span);
+        }
+
+        // Add body to the physics sim
+        const scale = 1;
+        const body = Bodies.rectangle(
+            textLeft + charWidth/2, textTop + charHeight/2,
+            charWidth * scale, charHeight * scale,
+            {
+                restitution: 0.1,
+                friction: 0.1,
+                frictionAir: 0.05,
+                density: 0.003,
+            }
+        );
+        World.add(world, body);
+
+        // Store initial position
+        letters.push({
+            el: span,
+            initX: textLeft,
+            initY: textTop,
+            width: charWidth,
+            height: charHeight,
+            body: body
+        })
+
+        textLeft += charWidth; 
+    }
+    // Add one link with all spans in for accessibility
+    if (a)
+        document.body.appendChild(a);
 }
 
 // Create the ball in the DOM
@@ -154,8 +165,9 @@ Object.assign(ballEl.style, {
 document.body.appendChild(ballEl);
 
 function createBall() {
+    const range = window.innerWidth*0.75;
     return Bodies.circle(
-        ballRadius * 1.5 + Math.random() * (window.innerWidth - ballRadius * 1.5),
+        window.innerWidth/2 + (-range/2 + Math.random() * range),
         window.innerHeight / 2,
         ballRadius,
         { restitution: 0.2, friction: 0.05}
@@ -177,7 +189,9 @@ setTimeout(() => {
 // Check ball is out of bounds
 Events.on(engine, 'afterUpdate', () => {
     if (!ball || respawnPending) return;
-    const outOfBounds = ball.position.x < -ballRadius || ball.position.x > window.innerWidth + ballRadius || ball.position.y > window.innerHeight + ballRadius;
+    const outOfBounds = ball.position.x < -ballRadius*1.1 || 
+        ball.position.x > window.innerWidth + ballRadius*1.1 || 
+        ball.position.y > window.innerHeight + ballRadius*1.1;
     if (outOfBounds) {
         World.remove(world, ball);
         ball = null;
@@ -289,6 +303,7 @@ function renderLoop() {
     for (let letter of letters) {
         letter.el.style.left = `${letter.body.position.x - letter.width/2}px`;
         letter.el.style.top = `${letter.body.position.y - letter.height/2}px`; 
+        letter.el.style.transform = `rotate(${letter.body.angle}rad)`;
     }
 
     requestAnimationFrame(renderLoop);

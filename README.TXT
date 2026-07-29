@@ -3,7 +3,7 @@
 TODO:
 - [x] Simple layout
 - [x] Ball game
-- [ ] moves texts 
+- [x] moves texts 
 - [ ] high score tracking
     - [ ] Confetti
 - [ ] Add projects
