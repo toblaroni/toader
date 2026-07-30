@@ -39,7 +39,7 @@ await document.fonts.ready;
 let textElements = [];
 for (const el of els) {
     textElements.push({
-        "value": el.textContent,
+        "element": el,
         "width": el.getBoundingClientRect().width,
         "position": {
             "top": el.getBoundingClientRect().top,
@@ -52,11 +52,6 @@ for (const el of els) {
         "href": el.getAttribute("href"),
     });
 }
-
-for (const el of els) {
-    el.style.display = "none";
-}
-
 
 function getCharDimensions(char, font) {
     const canvas = getCharDimensions.canvas || (getCharDimensions.canvas = document.createElement("canvas"));
@@ -78,84 +73,62 @@ let letters = [];
 // Also need to add polygons into the matter.js world
 
 for (const el of textElements) {
-    let textLeft = el.position.left;
-    let textTop = el.position.top;
-    let lineHeight = null;
+    const textNode = el.element.firstChild;
 
-    let a = null;
-    if (el.href) {
-        a = document.createElement("a");
-        a.href = el.href;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-    }
+    for (let i = 0; i < textNode.length; i++) {
 
-    // Split into words for text wrapping
-    // You could avoid this by letting the browser do the wrapping
-    for (const word of el.value.split(" ")) {
-        const [wordWidth, wordHeight] = getCharDimensions(word, el.styles.font);
-        const WRAP_TOLERANCE = 4;
-        if (textLeft + wordWidth > el.position.left + el.width + WRAP_TOLERANCE) {
-            // Newline
-            lineHeight = !lineHeight ? wordHeight * 1.2 : lineHeight;
-            textLeft = el.position.left;
-            textTop += lineHeight;
-        }
+        // Measure each character in the range
+        const range = document.createRange();
 
-        for (const char of word) {
-            const [charWidth, charHeight] = getCharDimensions(char, el.styles.font);
-            // Add letter to DOM
-            let span = document.createElement("span");
-            span.textContent = char;
+        range.setStart(textNode, i);
+        range.setEnd(textNode, i+1);
 
-            Object.assign(span.style, {
-                fontSize: el.styles.fontsize,
-                font: el.styles.font,
-                position: "absolute",
-                left: textLeft + "px",
-                top: textTop + "px",
-                userSelect: "none"
-            });
+        const rect = range.getBoundingClientRect();
 
-            if (a) {
-                a.appendChild(span);
-            } else {
-                document.body.appendChild(span);
+        if (rect.width === 0 || rect.height === 0)
+            continue;
+
+        const char = textNode.textContent[i];
+
+        // Add letter to DOM
+        let span = document.createElement("span");
+        span.textContent = char;
+
+        Object.assign(span.style, {
+            fontSize: el.styles.fontsize,
+            font: el.styles.font,
+            position: "absolute",
+            left: rect.x + "px",
+            top: rect.y + "px",
+            userSelect: "none"
+        });
+
+        document.body.appendChild(span);
+
+        // Add body to the physics sim
+        const scale = 0.5;
+        const body = Bodies.rectangle(
+            rect.x + rect.width/2, rect.y + rect.height/2,
+            rect.width * scale, rect.height * scale,
+            {
+                restitution: 0.1,
+                friction: 0.1,
+                frictionAir: 0.05,
+                density: 0.006,
             }
+        );
+        World.add(world, body);
 
-            // Add body to the physics sim
-            const scale = 0.95;
-            const body = Bodies.rectangle(
-                textLeft + charWidth/2, textTop + charHeight/2,
-                charWidth * scale, charHeight * scale,
-                {
-                    restitution: 0.1,
-                    friction: 0.1,
-                    frictionAir: 0.05,
-                    density: 0.006,
-                }
-            );
-            World.add(world, body);
-
-            // Store initial position
-            letters.push({
-                el: span,
-                initX: textLeft,
-                initY: textTop,
-                width: charWidth,
-                height: charHeight,
-                body: body
-            })
-
-            textLeft += charWidth; 
-        }
-        // Add one link with all spans in for accessibility
-        if (a)
-            document.body.appendChild(a);
-
-        // Add in a space after each word
-        const [spaceWidth, spaceHeight] = getCharDimensions(" ", el.styles.font);
-        textLeft += spaceWidth;
+        // Store initial position
+        letters.push({
+            el: span,
+            initX: rect.x,
+            initY: rect.y,
+            width: rect.width,
+            height: rect.height,
+            body: body
+        })
+            
     }
 }
 
@@ -285,7 +258,7 @@ Events.on(engine, "beforeUpdate", () => {
         });
     }
 
-    const k = 0.0001;
+    const k = 0.00005;
     const damping = 0.0007;
 
     for (const letter of letters) {
