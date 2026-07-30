@@ -33,10 +33,13 @@ function getCanvasFont(el) {
 // Create the text
 const els = document.querySelectorAll(".text-physics")
 
+// Wait for fonts to load
+await document.fonts.ready;
+
 let textElements = [];
 for (const el of els) {
     textElements.push({
-        "value": el.innerText,
+        "value": el.textContent,
         "width": el.getBoundingClientRect().width,
         "position": {
             "top": el.getBoundingClientRect().top,
@@ -129,7 +132,7 @@ for (const el of textElements) {
                     restitution: 0.1,
                     friction: 0.1,
                     frictionAir: 0.05,
-                    density: 0.008,
+                    density: 0.006,
                 }
             );
             World.add(world, body);
@@ -283,7 +286,7 @@ Events.on(engine, "beforeUpdate", () => {
     }
 
     const k = 0.0001;
-    const damping = 0.001;
+    const damping = 0.0007;
 
     for (const letter of letters) {
 
@@ -314,7 +317,7 @@ Events.on(engine, "beforeUpdate", () => {
         if (Math.abs(letter.body.angularVelocity) < 0.006) {
             Body.setAngularVelocity(letter.body, 0);
         } else {
-            letter.body.torque += -letter.body.angle * 0.001;
+            letter.body.torque += -letter.body.angle * 0.002;
         }
     }
 });

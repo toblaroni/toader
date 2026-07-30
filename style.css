@@ -95,3 +95,7 @@ ul {
     pointer-events: none;
     user-select: none;
 }
+
+.text-physics {
+    visibility: hidden;
+}
