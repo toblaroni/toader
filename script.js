@@ -31,27 +31,28 @@ function getCanvasFont(el) {
 
 // Store position and value data
 // Create the text
-const nameEl = document.getElementById("name");
-const aboutEl = document.getElementById("about");
-const linkEls = document.getElementsByClassName("contact-link");
+const els = document.querySelectorAll(".text-physics")
 
 let textElements = [];
-for (const el of [nameEl, aboutEl, ...linkEls]) {
+for (const el of els) {
     textElements.push({
         "value": el.innerText,
+        "width": el.getBoundingClientRect().width,
         "position": {
             "top": el.getBoundingClientRect().top,
             "left": el.getBoundingClientRect().left,
-            "width": el.getBoundingClientRect().width
         },
         "styles": {
             "font": getCanvasFont(el),
-            "fontsize": getCssStyle(el, "font-size")
+            "fontsize": getCssStyle(el, "font-size"),
         },
         "href": el.getAttribute("href"),
     });
 }
 
+for (const el of els) {
+    el.style.display = "none";
+}
 
 
 function getCharDimensions(char, font) {
@@ -66,13 +67,6 @@ function getCharDimensions(char, font) {
     ];
 }
 
-// Hide the elements
-nameEl.style.display = "none";
-aboutEl.style.display = "none";
-for (let el of linkEls) {
-    el.style.display = "none";
-}
-
 // this will store the initial and current position of each letter
 let letters = [];
 
@@ -83,6 +77,7 @@ let letters = [];
 for (const el of textElements) {
     let textLeft = el.position.left;
     let textTop = el.position.top;
+    let lineHeight = null;
 
     let a = null;
     if (el.href) {
@@ -92,61 +87,73 @@ for (const el of textElements) {
         a.rel = "noopener noreferrer";
     }
 
-    for (let char of el.value) {
-        const [charWidth, charHeight] = getCharDimensions(char, el.styles.font);
-        if (char == " ") {
-            textLeft += charWidth;
-            continue;
-        }
-        
-        // Add letter to DOM
-        let span = document.createElement("span");
-        span.textContent = char;
-
-        Object.assign(span.style, {
-            fontSize: el.styles.fontsize,
-            font: el.styles.font,
-            position: "absolute",
-            left: textLeft + "px",
-            top: textTop + "px",
-            userSelect: "none"
-        });
-
-        if (a) {
-            a.appendChild(span);
-        } else {
-            document.body.appendChild(span);
+    // Split into words for text wrapping
+    // You could avoid this by letting the browser do the wrapping
+    for (const word of el.value.split(" ")) {
+        const [wordWidth, wordHeight] = getCharDimensions(word, el.styles.font);
+        const WRAP_TOLERANCE = 4;
+        if (textLeft + wordWidth > el.position.left + el.width + WRAP_TOLERANCE) {
+            // Newline
+            lineHeight = !lineHeight ? wordHeight * 1.2 : lineHeight;
+            textLeft = el.position.left;
+            textTop += lineHeight;
         }
 
-        // Add body to the physics sim
-        const scale = 1;
-        const body = Bodies.rectangle(
-            textLeft + charWidth/2, textTop + charHeight/2,
-            charWidth * scale, charHeight * scale,
-            {
-                restitution: 0.1,
-                friction: 0.1,
-                frictionAir: 0.05,
-                density: 0.003,
+        for (const char of word) {
+            const [charWidth, charHeight] = getCharDimensions(char, el.styles.font);
+            // Add letter to DOM
+            let span = document.createElement("span");
+            span.textContent = char;
+
+            Object.assign(span.style, {
+                fontSize: el.styles.fontsize,
+                font: el.styles.font,
+                position: "absolute",
+                left: textLeft + "px",
+                top: textTop + "px",
+                userSelect: "none"
+            });
+
+            if (a) {
+                a.appendChild(span);
+            } else {
+                document.body.appendChild(span);
             }
-        );
-        World.add(world, body);
 
-        // Store initial position
-        letters.push({
-            el: span,
-            initX: textLeft,
-            initY: textTop,
-            width: charWidth,
-            height: charHeight,
-            body: body
-        })
+            // Add body to the physics sim
+            const scale = 0.95;
+            const body = Bodies.rectangle(
+                textLeft + charWidth/2, textTop + charHeight/2,
+                charWidth * scale, charHeight * scale,
+                {
+                    restitution: 0.1,
+                    friction: 0.1,
+                    frictionAir: 0.05,
+                    density: 0.008,
+                }
+            );
+            World.add(world, body);
 
-        textLeft += charWidth; 
+            // Store initial position
+            letters.push({
+                el: span,
+                initX: textLeft,
+                initY: textTop,
+                width: charWidth,
+                height: charHeight,
+                body: body
+            })
+
+            textLeft += charWidth; 
+        }
+        // Add one link with all spans in for accessibility
+        if (a)
+            document.body.appendChild(a);
+
+        // Add in a space after each word
+        const [spaceWidth, spaceHeight] = getCharDimensions(" ", el.styles.font);
+        textLeft += spaceWidth;
     }
-    // Add one link with all spans in for accessibility
-    if (a)
-        document.body.appendChild(a);
 }
 
 // Create the ball in the DOM
@@ -189,9 +196,9 @@ setTimeout(() => {
 // Check ball is out of bounds
 Events.on(engine, 'afterUpdate', () => {
     if (!ball || respawnPending) return;
-    const outOfBounds = ball.position.x < -ballRadius*1.1 || 
-        ball.position.x > window.innerWidth + ballRadius*1.1 || 
-        ball.position.y > window.innerHeight + ballRadius*1.1;
+    const outOfBounds = ball.position.x < -ballRadius*1.5 || 
+        ball.position.x > window.innerWidth + ballRadius*1.5 || 
+        ball.position.y > window.innerHeight + ballRadius*1.5;
     if (outOfBounds) {
         World.remove(world, ball);
         ball = null;
@@ -275,18 +282,40 @@ Events.on(engine, "beforeUpdate", () => {
         });
     }
 
-    const k = 0.0000005;
+    const k = 0.0001;
+    const damping = 0.001;
+
     for (const letter of letters) {
+
         const targetX = letter.initX + letter.width/2;
         const targetY = letter.initY + letter.height/2;
 
         const dx = targetX - letter.body.position.x;
         const dy = targetY - letter.body.position.y;
+        const dist2 = dx * dx + dy * dy;
+        if (letter.body.speed < 0.02) {
+            // Snap to position
+            // Body.setPosition(letter.body, {
+            //     x: targetX,
+            //     y: targetY
+            // })
 
-        Body.applyForce(letter.body, letter.body.position, {
-            x: dx * k,
-            y: dy * k
-        });
+            // Just stop moving
+            Body.setVelocity(letter.body, {x: 0, y: 0});
+
+        } else {
+            Body.applyForce(letter.body, letter.body.position, {
+                x: dx * k - letter.body.velocity.x * damping,
+                y: dy * k - letter.body.velocity.y * damping
+            });
+        }
+
+        const dr = -letter.body.angle;
+        if (Math.abs(letter.body.angularVelocity) < 0.006) {
+            Body.setAngularVelocity(letter.body, 0);
+        } else {
+            letter.body.torque += -letter.body.angle * 0.001;
+        }
     }
 });
 
@@ -301,9 +330,11 @@ function renderLoop() {
     }
 
     for (let letter of letters) {
-        letter.el.style.left = `${letter.body.position.x - letter.width/2}px`;
-        letter.el.style.top = `${letter.body.position.y - letter.height/2}px`; 
-        letter.el.style.transform = `rotate(${letter.body.angle}rad)`;
+        const dx = letter.body.position.x - (letter.initX + letter.width / 2);
+        const dy = letter.body.position.y - (letter.initY + letter.height / 2);
+        // Translate3d is gpu accelated
+        letter.el.style.transform = 
+            `translate3d(${dx}px, ${dy}px, 0) rotate(${letter.body.angle}rad)`;
     }
 
     requestAnimationFrame(renderLoop);

@@ -5,7 +5,8 @@ TODO:
 - [x] Ball game
 - [x] moves texts 
 - [ ] high score tracking
-    - [ ] Confetti
+    - [ ] Confetti or fireworks or something??
+- [ ] Make responsive
 - [ ] Add projects
 - [ ] Light/dark/random mode
 
