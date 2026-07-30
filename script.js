@@ -75,6 +75,7 @@ let letters = [];
 for (const el of textElements) {
     const textNode = el.element.firstChild;
 
+    let rects = [];
     for (let i = 0; i < textNode.length; i++) {
 
         // Measure each character in the range
@@ -84,9 +85,12 @@ for (const el of textElements) {
         range.setEnd(textNode, i+1);
 
         const rect = range.getBoundingClientRect();
+        rects.push(rect);
+    }
 
+    rects.forEach((rect, i) => {
         if (rect.width === 0 || rect.height === 0)
-            continue;
+            return;
 
         const char = textNode.textContent[i];
 
@@ -106,7 +110,7 @@ for (const el of textElements) {
         document.body.appendChild(span);
 
         // Add body to the physics sim
-        const scale = 0.5;
+        const scale = 0.55;
         const body = Bodies.rectangle(
             rect.x + rect.width/2, rect.y + rect.height/2,
             rect.width * scale, rect.height * scale,
@@ -128,8 +132,7 @@ for (const el of textElements) {
             height: rect.height,
             body: body
         })
-            
-    }
+    });
 }
 
 // Create the ball in the DOM
