@@ -66,11 +66,15 @@ body {
     padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 25px;
     height: 20vh;
     max-height: 360px;
     min-height: 275px;
 }
+
+/* #about, #contact-links {
+    margin-top: 20px;
+} */
 
 ul {
     list-style: none;

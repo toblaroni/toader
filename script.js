@@ -74,6 +74,16 @@ let letters = [];
 
 for (const el of textElements) {
     const textNode = el.element.firstChild;
+    let a = null;
+    let parent = document.body;
+
+    if (el.href) {
+        a = document.createElement("a");
+        a.href = el.href;
+        a.target = el.element.getAttribute("target") || "_self";
+        console.log(a.target);
+        parent = a;
+    }
 
     let rects = [];
     for (let i = 0; i < textNode.length; i++) {
@@ -89,8 +99,10 @@ for (const el of textElements) {
     }
 
     rects.forEach((rect, i) => {
+
         if (rect.width === 0 || rect.height === 0)
             return;
+
 
         const char = textNode.textContent[i];
 
@@ -107,7 +119,7 @@ for (const el of textElements) {
             userSelect: "none"
         });
 
-        document.body.appendChild(span);
+        parent.appendChild(span);
 
         // Add body to the physics sim
         const scale = 0.55;
@@ -133,6 +145,10 @@ for (const el of textElements) {
             body: body
         })
     });
+
+    if (a) {
+        document.body.appendChild(a);
+    }
 }
 
 // Create the ball in the DOM
