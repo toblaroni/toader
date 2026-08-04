@@ -9,13 +9,14 @@ const complimentaryColor = getComputedStyle(document.documentElement)
     .getPropertyValue('--complimentary-color')
     .trim();
 
+const scoreEl = document.getElementById('score');
+
 let score = 0;
 let isBallOnGround = false;
 let respawnPending = false;
 let ball = null
 
-const scoreEl = document.getElementById('score');
-
+let restoreTimerId = null;
 
 function getCssStyle(element, prop) {
     return window.getComputedStyle(element, null).getPropertyValue(prop);
@@ -53,18 +54,6 @@ for (const el of els) {
     });
 }
 
-function getCharDimensions(char, font) {
-    const canvas = getCharDimensions.canvas || (getCharDimensions.canvas = document.createElement("canvas"));
-    const context = canvas.getContext("2d");
-    context.font = font;
-    const metrics = context.measureText(char);
-    return [ 
-        metrics.width, 
-        metrics.actualBoundingBoxAscent +
-        metrics.actualBoundingBoxDescent
-    ];
-}
-
 // this will store the initial and current position of each letter
 let letters = [];
 
@@ -81,7 +70,6 @@ for (const el of textElements) {
         a = document.createElement("a");
         a.href = el.href;
         a.target = el.element.getAttribute("target") || "_self";
-        console.log(a.target);
         parent = a;
     }
 
@@ -103,7 +91,6 @@ for (const el of textElements) {
         if (rect.width === 0 || rect.height === 0)
             return;
 
-
         const char = textNode.textContent[i];
 
         // Add letter to DOM
@@ -116,7 +103,8 @@ for (const el of textElements) {
             position: "absolute",
             left: rect.x + "px",
             top: rect.y + "px",
-            userSelect: "none"
+            userSelect: "none",
+            
         });
 
         parent.appendChild(span);
@@ -130,7 +118,7 @@ for (const el of textElements) {
                 restitution: 0.1,
                 friction: 0.1,
                 frictionAir: 0.05,
-                density: 0.006,
+                density: 0.01,
             }
         );
         World.add(world, body);
@@ -162,7 +150,8 @@ Object.assign(ballEl.style, {
     background: complimentaryColor,
     left: '0',
     top: '0',
-    transform: 'translate(-9999px, -9999px)',
+    willChange: 'transform',
+    transform: 'translate3d(-9999px, -9999px, 0px)',
 });
 document.body.appendChild(ballEl);
 
@@ -227,10 +216,14 @@ function isPointInBall(point, circleBody) {
 window.addEventListener('pointerdown', (event) => {
     const clickPosition = { x: event.clientX, y: event.clientY };
     if (isPointInBall(clickPosition, ball)) {
+        scheduleRestore();
+
         if (!isBallOnGround) {
             score += 1;
             renderScore();
-        } const dx = clickPosition.x - ball.position.x;
+        } 
+
+        const dx = clickPosition.x - ball.position.x;
         const dy = clickPosition.y - ball.position.y;
         const magnitude = Math.hypot(dx, dy) || 1;
         const nx = dx / magnitude;
@@ -239,25 +232,70 @@ window.addEventListener('pointerdown', (event) => {
         const horizontalDamping = 0.3;
         const inverseY = -ny;
         const upwardY = -Math.max(Math.abs(inverseY), 0.35);
-        Body.applyForce(ball, ball.position, { x: -nx * forceStrength * horizontalDamping, y: upwardY * forceStrength });
+
+        Body.applyForce(
+            ball, 
+            ball.position, 
+            { 
+                x: -nx * forceStrength * horizontalDamping, 
+                y: upwardY * forceStrength 
+            }
+        );
     }
 });
 
+function restoreLetters() {
+    const strength = 0.02;
+
+    for (const letter of letters) {
+
+        const targetX = letter.initX + letter.width/2;
+        const targetY = letter.initY + letter.height/2;
+
+        const dx = targetX - letter.body.position.x;
+        const dy = targetY - letter.body.position.y;
+
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < 1) continue;
+
+        Body.setVelocity(letter.body, {
+            x: dx * strength,
+            y: dy * strength
+        });
+
+        letter.body.torque += -letter.body.angle * strength;
+    }
+}
+
+function scheduleRestore() {
+    if (restoreTimerId) {
+        clearTimeout(restoreTimerId);
+    }
+
+    restoreTimerId = setTimeout(() => {
+        restoreLetters();
+        restoreTimerId = null;
+    }, 2000);
+}
 
 Events.on(engine, 'collisionStart', (event) => {
     for (const pair of event.pairs) {
-        const ballHitFloor = (pair.bodyA === ball && pair.bodyB === floor) || (pair.bodyB === ball && pair.bodyA === floor);
+        const ballHitFloor = (pair.bodyA === ball && pair.bodyB === floor) || 
+            (pair.bodyB === ball && pair.bodyA === floor);
         if (ballHitFloor) {
             isBallOnGround = true;
             score = 0;
             renderScore();
         }
+
     }
 });
 
 Events.on(engine, 'collisionEnd', (event) => {
     for (const pair of event.pairs) {
-        const ballLeftFloor = (pair.bodyA === ball && pair.bodyB === floor) || (pair.bodyB === ball && pair.bodyA === floor);
+        const ballLeftFloor = (pair.bodyA === ball && pair.bodyB === floor) || 
+            (pair.bodyB === ball && pair.bodyA === floor);
         if (ballLeftFloor) {
             isBallOnGround = false;
         }
@@ -268,49 +306,13 @@ function renderScore() {
     if (scoreEl) scoreEl.textContent = String(score);
 }
 
-
 Events.on(engine, "beforeUpdate", () => {
     if (ball) {
+        // Apply gravity only to the ball
         Body.applyForce(ball, ball.position, {
             x: 0,
             y: ball.mass * engine.gravity.scale
         });
-    }
-
-    const k = 0.00005;
-    const damping = 0.0007;
-
-    for (const letter of letters) {
-
-        const targetX = letter.initX + letter.width/2;
-        const targetY = letter.initY + letter.height/2;
-
-        const dx = targetX - letter.body.position.x;
-        const dy = targetY - letter.body.position.y;
-        const dist2 = dx * dx + dy * dy;
-        if (letter.body.speed < 0.02) {
-            // Snap to position
-            // Body.setPosition(letter.body, {
-            //     x: targetX,
-            //     y: targetY
-            // })
-
-            // Just stop moving
-            Body.setVelocity(letter.body, {x: 0, y: 0});
-
-        } else {
-            Body.applyForce(letter.body, letter.body.position, {
-                x: dx * k - letter.body.velocity.x * damping,
-                y: dy * k - letter.body.velocity.y * damping
-            });
-        }
-
-        const dr = -letter.body.angle;
-        if (Math.abs(letter.body.angularVelocity) < 0.006) {
-            Body.setAngularVelocity(letter.body, 0);
-        } else {
-            letter.body.torque += -letter.body.angle * 0.002;
-        }
     }
 });
 
@@ -318,16 +320,19 @@ function renderLoop() {
     Engine.update(engine);
     // Render the ball
     if (ball) {
-        ballEl.style.transform = ` translate( 
+        // Translate3d is gpu accelated
+        ballEl.style.transform = ` translate3d( 
             ${ball.position.x - ballRadius}px, 
-            ${ball.position.y - ballRadius}px
+            ${ball.position.y - ballRadius}px,
+            0px
         )`;
     }
+
+    console.log(restoreTimerId);
 
     for (let letter of letters) {
         const dx = letter.body.position.x - (letter.initX + letter.width / 2);
         const dy = letter.body.position.y - (letter.initY + letter.height / 2);
-        // Translate3d is gpu accelated
         letter.el.style.transform = 
             `translate3d(${dx}px, ${dy}px, 0) rotate(${letter.body.angle}rad)`;
     }
