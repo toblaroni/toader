@@ -17,6 +17,8 @@ let respawnPending = false;
 let ball = null
 
 let restoreTimerId = null;
+let isRestoring = false;
+let restoreStart;
 
 function getCssStyle(element, prop) {
     return window.getComputedStyle(element, null).getPropertyValue(prop);
@@ -216,7 +218,25 @@ function isPointInBall(point, circleBody) {
 window.addEventListener('pointerdown', (event) => {
     const clickPosition = { x: event.clientX, y: event.clientY };
     if (isPointInBall(clickPosition, ball)) {
-        scheduleRestore();
+
+        // Reset the letters when the mouse hasn't been clicked for a bit
+        if (restoreTimerId) {
+            clearTimeout(restoreTimerId);
+            restoreTimerId = null;
+            isRestoring = false;
+        } 
+
+        restoreTimerId = setTimeout(() => {
+            isRestoring = true;
+
+            // Give each letter an offset 
+            for (let letter of letters) {
+                // Between zero and 3 seconds
+                letter["restoreOffset"] = Math.random() * 12000;
+                letter["restoreSpeed"] = 0.1 + Math.random() * 0.2;
+                restoreStart = Date.now();
+            }
+        }, 2500);
 
         if (!isBallOnGround) {
             score += 1;
@@ -244,40 +264,6 @@ window.addEventListener('pointerdown', (event) => {
     }
 });
 
-function restoreLetters() {
-    const strength = 0.02;
-
-    for (const letter of letters) {
-
-        const targetX = letter.initX + letter.width/2;
-        const targetY = letter.initY + letter.height/2;
-
-        const dx = targetX - letter.body.position.x;
-        const dy = targetY - letter.body.position.y;
-
-        const dist = Math.hypot(dx, dy);
-
-        if (dist < 1) continue;
-
-        Body.setVelocity(letter.body, {
-            x: dx * strength,
-            y: dy * strength
-        });
-
-        letter.body.torque += -letter.body.angle * strength;
-    }
-}
-
-function scheduleRestore() {
-    if (restoreTimerId) {
-        clearTimeout(restoreTimerId);
-    }
-
-    restoreTimerId = setTimeout(() => {
-        restoreLetters();
-        restoreTimerId = null;
-    }, 2000);
-}
 
 Events.on(engine, 'collisionStart', (event) => {
     for (const pair of event.pairs) {
@@ -292,6 +278,7 @@ Events.on(engine, 'collisionStart', (event) => {
     }
 });
 
+
 Events.on(engine, 'collisionEnd', (event) => {
     for (const pair of event.pairs) {
         const ballLeftFloor = (pair.bodyA === ball && pair.bodyB === floor) || 
@@ -303,8 +290,10 @@ Events.on(engine, 'collisionEnd', (event) => {
 });
 
 function renderScore() {
-    if (scoreEl) scoreEl.textContent = String(score);
+    if (scoreEl) 
+        scoreEl.textContent = String(score);
 }
+
 
 Events.on(engine, "beforeUpdate", () => {
     if (ball) {
@@ -314,7 +303,58 @@ Events.on(engine, "beforeUpdate", () => {
             y: ball.mass * engine.gravity.scale
         });
     }
+
+    if (isRestoring) {
+        const elapsedTime = Date.now() - restoreStart;
+
+        for (const letter of letters) {
+            if (elapsedTime < letter.restoreOffset)
+                continue;
+
+            const minSpeed = 0.05; // Prevent jittery crawling....
+            const maxSpeed = letter.restoreSpeed;
+            const slowRadius = 30;
+
+            const targetX = letter.initX + letter.width/2;
+            const targetY = letter.initY + letter.height/2;
+
+            const dx = targetX - letter.body.position.x;
+            const dy = targetY - letter.body.position.y;
+
+            const dist = Math.hypot(dx, dy);
+
+            let speed;
+
+            if (dist > slowRadius) {
+                speed = maxSpeed;
+            } else {
+                // Cubic ease out
+                const t = Math.min(dist / slowRadius, 1);
+                speed = minSpeed + 
+                    (maxSpeed * (1 - Math.pow(1 - t, 3)));
+            }
+
+            if (dist <= 0.5) {
+                Body.setPosition(letter.body, { x: targetX, y: targetY });
+                Body.setVelocity(letter.body, { x: 0, y: 0 });
+                Body.setAngularVelocity(letter.body, 0);
+            } else {
+                // Normalise
+                Body.setVelocity(letter.body, {
+                    x: dx / dist * speed,
+                    y: dy / dist * speed  
+                });
+
+                Body.setAngularVelocity(
+                    letter.body,
+                    -letter.body.angle * speed * 0.03
+                );
+            }
+
+        }
+    }
 });
+
 
 function renderLoop() {
     Engine.update(engine);
