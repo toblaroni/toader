@@ -16,4 +16,7 @@ Nice to have
 - [ ] Mouse effect where clicking explodes the text around the mouse
 - [ ] Reset button that forces the text back to original positions
 
+Could have
+- [ ] Phone tilt effect on mobile?
+
 

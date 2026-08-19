@@ -28,7 +28,6 @@
 }
 
 a span {
-    text-decoration: underline;
     color: var(--complimentary-color);
 }
 
@@ -36,11 +35,6 @@ a span {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-#ball {
-    will-change: "transform";
-
 }
 
 html, body {
@@ -57,6 +51,7 @@ body {
     color: var(--complimentary-color);
     display:flex;
     justify-content: center;
+    touch-action: manipulation;
 }
 
 #main-container {
@@ -82,9 +77,9 @@ body {
     min-height: 275px;
 }
 
-/* #about, #contact-links {
-    margin-top: 20px;
-} */
+.contact-links::after {
+    content: " ↗";
+} 
 
 
 ul {
@@ -114,9 +109,15 @@ ul {
 
 .text-physics {
     visibility: hidden;
+    -webkit-user-select: none;  /* Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* Internet Explorer */
+    user-select: none;          /* Standard syntax */
 }
 
 span {
     user-select: none;
     -webkit-user-select: none;
 }
+
+
