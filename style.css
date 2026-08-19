@@ -37,9 +37,8 @@ a span {
     box-sizing: border-box;
 }
 
-#ball {
+#ball span {
     will-change: transform;
-
 }
 
 html, body {

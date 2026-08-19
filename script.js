@@ -359,7 +359,7 @@ Events.on(engine, "beforeUpdate", () => {
 
 
 function renderLoop() {
-    Engine.update(engine, 1000/60);
+    Engine.update(engine);
     // Render the ball
     if (ball) {
         // Translate3d is gpu accelated
