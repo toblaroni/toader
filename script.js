@@ -296,7 +296,6 @@ function renderScore() {
         scoreEl.textContent = String(score);
 }
 
-
 Events.on(engine, "beforeUpdate", () => {
     if (ball) {
         // Apply gravity only to the ball
@@ -358,8 +357,14 @@ Events.on(engine, "beforeUpdate", () => {
 });
 
 
-function renderLoop() {
-    Engine.update(engine);
+let lastTime = performance.now();
+
+function renderLoop(now) {
+    const delta = Math.min(now - lastTime, 16.66666); // clamp so a dropped/backgrounded frame doesn't cause a huge jump ("spiral of death")
+    lastTime = now;
+
+    Engine.update(engine, delta);
+    
     // Render the ball
     if (ball) {
         // Translate3d is gpu accelated
@@ -380,4 +385,4 @@ function renderLoop() {
     requestAnimationFrame(renderLoop);
 }
 
-renderLoop();
+requestAnimationFrame(renderLoop);
