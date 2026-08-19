@@ -9,6 +9,7 @@ const complimentaryColor = getComputedStyle(document.documentElement)
     .getPropertyValue('--complimentary-color')
     .trim();
 
+// remove score for now
 const scoreEl = document.getElementById('score');
 
 let score = 0;
@@ -19,6 +20,7 @@ let ball = null
 let restoreTimerId = null;
 let isRestoring = false;
 let restoreStart;
+const restoreDelay = 3000;  // Wait 3 seconds
 
 function getCssStyle(element, prop) {
     return window.getComputedStyle(element, null).getPropertyValue(prop);
@@ -161,7 +163,7 @@ function createBall() {
     const range = window.innerWidth*0.75;
     return Bodies.circle(
         window.innerWidth/2 + (-range/2 + Math.random() * range),
-        window.innerHeight / 2,
+        window.innerHeight*3/4,
         ballRadius,
         { restitution: 0.2, friction: 0.05}
     );
@@ -236,7 +238,7 @@ window.addEventListener('pointerdown', (event) => {
                 letter["restoreSpeed"] = 0.1 + Math.random() * 0.2;
                 restoreStart = Date.now();
             }
-        }, 2500);
+        }, restoreDelay);
 
         if (!isBallOnGround) {
             score += 1;
@@ -357,7 +359,7 @@ Events.on(engine, "beforeUpdate", () => {
 
 
 function renderLoop() {
-    Engine.update(engine);
+    Engine.update(engine, 1000/60);
     // Render the ball
     if (ball) {
         // Translate3d is gpu accelated
@@ -367,8 +369,6 @@ function renderLoop() {
             0px
         )`;
     }
-
-    console.log(restoreTimerId);
 
     for (let letter of letters) {
         const dx = letter.body.position.x - (letter.initX + letter.width / 2);
