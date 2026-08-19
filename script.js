@@ -137,6 +137,9 @@ for (const el of textElements) {
 }
 
 window.addEventListener('pointerdown', (event) => {
+    if (event.target.closest('a')) 
+        return;
+
     const mouseX = event.clientX;
     const mouseY = event.clientY;
 
