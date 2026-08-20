@@ -11,8 +11,6 @@ const complimentaryColor = getComputedStyle(document.documentElement)
 
 const physicsLayer = document.querySelector(".physics-layer");
 
-const scoreEl = document.getElementById('score');
-let score = 0;
 let isBallOnGround = false;
 let respawnPending = false;
 let ball = null
@@ -190,8 +188,6 @@ Events.on(engine, 'afterUpdate', () => {
     if (outOfBounds) {
         World.remove(world, ball);
         ball = null;
-        score = 0;
-        renderScore();
         scheduleBallRespawn();
     }
 });
@@ -240,11 +236,6 @@ window.addEventListener('pointerdown', (event) => {
             }
         }, restoreDelay);
 
-        if (!isBallOnGround) {
-            score += 1;
-            renderScore();
-        } 
-
         const dx = clickPosition.x - ball.position.x;
         const dy = clickPosition.y - ball.position.y;
         const magnitude = Math.hypot(dx, dy) || 1;
@@ -266,35 +257,6 @@ window.addEventListener('pointerdown', (event) => {
     }
 });
 
-
-Events.on(engine, 'collisionStart', (event) => {
-    for (const pair of event.pairs) {
-        const ballHitFloor = (pair.bodyA === ball && pair.bodyB === floor) || 
-            (pair.bodyB === ball && pair.bodyA === floor);
-        if (ballHitFloor) {
-            isBallOnGround = true;
-            score = 0;
-            renderScore();
-        }
-
-    }
-});
-
-
-Events.on(engine, 'collisionEnd', (event) => {
-    for (const pair of event.pairs) {
-        const ballLeftFloor = (pair.bodyA === ball && pair.bodyB === floor) || 
-            (pair.bodyB === ball && pair.bodyA === floor);
-        if (ballLeftFloor) {
-            isBallOnGround = false;
-        }
-    }
-});
-
-function renderScore() {
-    if (scoreEl) 
-        scoreEl.textContent = String(score);
-}
 
 Events.on(engine, "beforeUpdate", () => {
     if (ball) {

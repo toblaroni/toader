@@ -100,20 +100,6 @@ ul {
     font-weight: bolder;
 }
 
-#score {
-    position: fixed;
-    left: 50%;
-    top: 100%;
-    transform: translate(-50%, -150%);
-    z-index: 1200;
-    font-weight: 700;
-    font-size: clamp(30px, 2.5vw, 35px);
-    color: var(--complimentary-color);
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
 .text-physics {
     visibility: hidden;
 }
@@ -145,11 +131,4 @@ span {
 
     }
 
-    #score {
-        left: 25px;
-        bottom: 20px;
-        top: auto;
-        transform: none;
-    }
-    
 }
