@@ -9,9 +9,9 @@ const complimentaryColor = getComputedStyle(document.documentElement)
     .getPropertyValue('--complimentary-color')
     .trim();
 
-// remove score for now
-const scoreEl = document.getElementById('score');
+const physicsLayer = document.querySelector(".physics-layer");
 
+const scoreEl = document.getElementById('score');
 let score = 0;
 let isBallOnGround = false;
 let respawnPending = false;
@@ -68,7 +68,7 @@ let letters = [];
 for (const el of textElements) {
     const textNode = el.element.firstChild;
     let a = null;
-    let parent = document.body;
+    let parent = physicsLayer;
 
     if (el.href) {
         a = document.createElement("a");
@@ -139,7 +139,7 @@ for (const el of textElements) {
     });
 
     if (a) {
-        document.body.appendChild(a);
+        physicsLayer.appendChild(a);
     }
 }
 
@@ -235,7 +235,7 @@ window.addEventListener('pointerdown', (event) => {
             for (let letter of letters) {
                 // Between zero and 3 seconds
                 letter["restoreOffset"] = Math.random() * 12000;
-                letter["restoreSpeed"] = 0.1 + Math.random() * 0.2;
+                letter["restoreSpeed"] = 0.2 + Math.random() * 0.4;
                 restoreStart = Date.now();
             }
         }, restoreDelay);
@@ -312,7 +312,7 @@ Events.on(engine, "beforeUpdate", () => {
             if (elapsedTime < letter.restoreOffset)
                 continue;
 
-            const minSpeed = 0.05; // Prevent jittery crawling....
+            const minSpeed = 0.08; // Prevent jittery crawling....
             const maxSpeed = letter.restoreSpeed;
             const slowRadius = 30;
 

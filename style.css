@@ -44,8 +44,19 @@ a span {
 html, body {
     width: 100%;
     height: 100%;
+    margin: 0;
     overflow: hidden;
     overscroll-behavior: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    html,
+    body {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
 }
 
 body {
@@ -54,7 +65,7 @@ body {
     color: var(--complimentary-color);
     display:flex;
     justify-content: center; 
-    font-size: clamp(18px, 2.5vw, 30px);
+    font-size: clamp(30px, 2.5vw, 35px);
 
 }
 
@@ -76,15 +87,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 25px;
-    height: 20vh;
-    max-height: 360px;
-    min-height: 275px;
+    height: auto;
 }
-
-/* #about, #contact-links {
-    margin-top: 20px;
-} */
-
 
 ul {
     list-style: none;
@@ -98,13 +102,12 @@ ul {
 
 #score {
     position: fixed;
-    left: 20px;
-    bottom: 14px;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -150%);
     z-index: 1200;
     font-weight: 700;
-    font-size: 30px;
-    padding: 6px 10px;
-    border-radius: 8px;
+    font-size: clamp(30px, 2.5vw, 35px);
     color: var(--complimentary-color);
     pointer-events: none;
     user-select: none;
@@ -115,7 +118,38 @@ ul {
     visibility: hidden;
 }
 
+.physics-layer {
+    inset: 0;
+    position: fixed;
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.physics-layer a {
+    pointer-events: auto;
+}
+
 span {
     user-select: none;
     -webkit-user-select: none;
+}
+
+@media (max-width: 480px) {
+    .info-container {
+        width: 100%;
+        min-width: 0px;
+        min-height: unset;
+        height: auto;
+
+    }
+
+    #score {
+        left: 25px;
+        bottom: 20px;
+        top: auto;
+        transform: none;
+    }
+    
 }
