@@ -5,9 +5,11 @@ const world = engine.world;
 engine.gravity.y = 0;
 engine.gravity.scale = 0.002;
 
-const complimentaryColor = getComputedStyle(document.documentElement)
-    .getPropertyValue('--complimentary-color')
-    .trim();
+function getComplimentaryColor() {
+    return getComputedStyle(document.documentElement)
+        .getPropertyValue('--complimentary-color')
+        .trim();
+}
 
 const physicsLayer = document.querySelector(".physics-layer");
 
@@ -149,11 +151,12 @@ Object.assign(ballEl.style, {
     width: `${ballRadius*2}px`,
     height: `${ballRadius*2}px`,
     borderRadius: '50%',
-    background: complimentaryColor,
+    background: getComplimentaryColor(),
     left: '0',
     top: '0',
     willChange: 'transform',
     transform: 'translate3d(-9999px, -9999px, 0px)',
+    cursor: 'grab',
 });
 document.body.appendChild(ballEl);
 
@@ -241,8 +244,8 @@ window.addEventListener('pointerdown', (event) => {
         const magnitude = Math.hypot(dx, dy) || 1;
         const nx = dx / magnitude;
         const ny = dy / magnitude;
-        const forceStrength = 0.075 * ball.mass;
-        const horizontalDamping = 0.3;
+        const forceStrength = 0.09 * ball.mass;
+        const horizontalDamping = 0.4;
         const inverseY = -ny;
         const upwardY = -Math.max(Math.abs(inverseY), 0.35);
 
@@ -348,3 +351,31 @@ function renderLoop(now) {
 }
 
 requestAnimationFrame(renderLoop);
+
+
+// === Colour Scheme ===
+const toggle = document.getElementById("toggle-scheme");
+const root = document.documentElement;
+
+// What scheme does the client have
+const prefersDark = window.matchMedia(
+    "(prefers-color-scheme: dark)"
+).matches;
+
+// Set initial theme
+root.classList.add(prefersDark ? "dark" : "light");
+toggle.textContent = prefersDark ? "✧" : "✦";
+
+toggle.addEventListener("click", () => {
+    if (root.classList.contains("dark")) {
+        root.classList.remove("dark");
+        root.classList.add("light");
+        ballEl.style.backgroundColor = getComplimentaryColor();
+        toggle.innerText = "✦"
+    } else {
+        root.classList.remove("light");
+        root.classList.add("dark");
+        ballEl.style.backgroundColor = getComplimentaryColor();
+        toggle.innerText = "✧";
+    }
+});

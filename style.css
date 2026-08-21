@@ -1,6 +1,17 @@
+/* Light and dark schemes */
 :root {
     --primary-color: #f8f8f8;
-    --complimentary-color: #222222;   /* These get updated in js */
+    --complimentary-color: #222222;   
+}
+
+:root.light {
+    --primary-color: #f8f8f8;
+    --complimentary-color: #222222;   
+}
+
+:root.dark {
+    --primary-color: #222222;
+    --complimentary-color: #f8f8f8;   
 }
 
 @font-face {
@@ -67,6 +78,9 @@ body {
     justify-content: center; 
     font-size: clamp(30px, 2.5vw, 35px);
 
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
 }
 
 #main-container {
@@ -120,6 +134,18 @@ ul {
 span {
     user-select: none;
     -webkit-user-select: none;
+}
+
+#scheme-container {
+    font-size: clamp(45px, 3vw, 60px);
+    position: fixed;
+    right: 30px;
+    top: 15px;
+}
+
+.scheme-symbol {
+    cursor: pointer;
+
 }
 
 @media (max-width: 480px) {
