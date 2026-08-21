@@ -156,7 +156,9 @@ Object.assign(ballEl.style, {
     top: '0',
     willChange: 'transform',
     transform: 'translate3d(-9999px, -9999px, 0px)',
-    cursor: 'grab',
+    cursor: 'crosshair',
+    transition: 'background-color 1s ease'
+        
 });
 document.body.appendChild(ballEl);
 

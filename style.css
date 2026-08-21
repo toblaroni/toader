@@ -79,9 +79,10 @@ body {
     font-size: clamp(30px, 2.5vw, 35px);
 
     transition:
-        background-color 0.3s ease,
-        color 0.3s ease;
+        background-color 1s ease,
+        color 1.5s ease;
 }
+
 
 #main-container {
     display: flex;
@@ -136,6 +137,15 @@ span {
     -webkit-user-select: none;
 }
 
+a {
+    color: var(--complimentary-color);
+}
+
+a span {
+    color: var(--complimentary-color);
+    transition: color 1.5s ease;
+}
+
 #scheme-container {
     font-size: clamp(45px, 3vw, 60px);
     position: fixed;
@@ -145,7 +155,6 @@ span {
 
 .scheme-symbol {
     cursor: pointer;
-
 }
 
 @media (max-width: 480px) {
